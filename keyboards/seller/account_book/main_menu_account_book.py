@@ -1,5 +1,6 @@
 from bale import InlineKeyboardButton, InlineKeyboardMarkup
 from callbacks.cb_seller_account_book import *
+from callbacks.cb_main_menu_seller import CB_SELLER_ACCOUNT_BOOK
 def main_menu_account_book():
     keyboard = InlineKeyboardMarkup()
 
@@ -12,4 +13,24 @@ def main_menu_account_book():
     keyboard.add(btn2, row=2)
     keyboard.add(btn3, row=3)
     keyboard.add(btn4, row=4)
+    return keyboard
+
+def aplly_customer():
+    keyboard = InlineKeyboardMarkup()
+
+    btn1 = InlineKeyboardButton("ثبت اطلاعات", callback_data=CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER)
+    btn2 = InlineKeyboardButton("بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
+
+    keyboard.add(btn1, row=1)
+    keyboard.add(btn2, row=2)
+
+    return keyboard
+
+def back_btn():
+    keyboard = InlineKeyboardMarkup()
+
+    btn1 = InlineKeyboardButton("بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
+
+    keyboard.add(btn1, row=1)
+
     return keyboard
