@@ -15,7 +15,7 @@ def main_menu_account_book():
     keyboard.add(btn4, row=4)
     return keyboard
 
-def aplly_customer():
+def apply_customer():
     keyboard = InlineKeyboardMarkup()
 
     btn1 = InlineKeyboardButton("ثبت اطلاعات", callback_data=CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER)
