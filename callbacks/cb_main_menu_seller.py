@@ -1,2 +1,2 @@
 # Call Back Seller ...
-CB_S_ACCOUNT_BOOK = "seller:account:book"
+CB_SELLER_ACCOUNT_BOOK = "seller:account:book"

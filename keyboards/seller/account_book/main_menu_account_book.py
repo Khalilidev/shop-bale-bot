@@ -1,0 +1,15 @@
+from bale import InlineKeyboardButton, InlineKeyboardMarkup
+from callbacks.cb_seller_account_book import *
+def main_menu_account_book():
+    keyboard = InlineKeyboardMarkup()
+
+    btn1 = InlineKeyboardButton("افزودن مشتری", callback_data=CB_SELLER_ACCOUNT_BOOK_ADD_CUSTOMER)
+    btn2 = InlineKeyboardButton("ویرایش حساب مشتری", callback_data= CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER)
+    btn3 = InlineKeyboardButton("دریافت PDF حساب ها", callback_data= CB_SELLER_ACCOUNT_BOOK_GET_PDF)
+    btn4 = InlineKeyboardButton("بازگشت به منوی قبلی ",callback_data= CB_BACK_TO_MAIN_MENU_SELLER)
+
+    keyboard.add(btn1, row=1)
+    keyboard.add(btn2, row=2)
+    keyboard.add(btn3, row=3)
+    keyboard.add(btn4, row=4)
+    return keyboard
