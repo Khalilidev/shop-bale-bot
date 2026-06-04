@@ -1,11 +1,19 @@
 from bale import Bot, Message, CallbackQuery
+
 from configs import TOKEN
 from core.logging import is_seller
+
 from keyboards.seller.account_book.main_menu_account_book import *
 from keyboards.seller.main_menu_seller import *
+
 from texts.seller_texts import *
+
 from callbacks.cb_main_menu_seller import *
 from callbacks.cb_seller_account_book import *
+
+from handlers.add_customer_to_db import add_customer
+
+from datetime import datetime
 
 user_state = {}
 temp_customer = {}
@@ -53,7 +61,7 @@ async def on_message(message: Message):
                     name=temp_customer[message.chat.id]["name"],
                     phone=temp_customer[message.chat.id]["phone"],
                     amount=temp_customer[message.chat.id]["amount"],
-                    reason=temp_customer[message.chat.id]["reason"]),components=apply_customer())
+                    reason=temp_customer[message.chat.id]["reason"]),components=apply_customer())       
             return
         
     if message.text == '/start':
@@ -70,7 +78,21 @@ async def on_callback(callback: CallbackQuery):
         temp_customer[callback.message.chat.id] = {}
         await callback.message.edit(ASK_CUSTOMER_NAME_TEXT, components=back_btn())
 
-    # elif callback.data == CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER:
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER:
+        try:
+            add_customer(name=temp_customer[callback.message.chat.id]["name"],
+                        phone=temp_customer[callback.message.chat.id]["phone"],
+                        amount=int(temp_customer[callback.message.chat.id]["amount"]),
+                        reason=temp_customer[callback.message.chat.id]["reason"])
+            print("customer info seccessfuly added to database!")
+            await callback.message.edit(CUSTOMER_ADDED_SUCCESS_TEXT.format(
+                name=temp_customer[callback.message.chat.id]["name"],
+                phone=temp_customer[callback.message.chat.id]["phone"],
+                amount=temp_customer[callback.message.chat.id]["amount"],
+                reason=temp_customer[callback.message.chat.id]["reason"],
+                date=datetime.now().strftime("%Y/%m/%d")), components=back_btn())
+        except:
+            await callback.message.edit(CUSTOMER_ADD_FAILED_TEXT, components=back_btn())
 
 if __name__ == "__main__":
     bot.run()
