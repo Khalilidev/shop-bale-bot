@@ -28,3 +28,26 @@ CUSTOMER_INFO_CONFIRM_TEXT = "📋 **لطفاً اطلاعات وارد شده �
 CUSTOMER_ADDED_SUCCESS_TEXT = "✅ **مشتری با موفقیت ثبت شد**\n\n👤 نام: {name}\n📞 شماره تماس: {phone}\n💰 مبلغ بدهی: {amount:} تومان\n📝 علت بدهی: {reason}\n\n🕒 تاریخ ثبت: {date}\n\n✅ اطلاعات مشتری در دفترچه حساب شما ذخیره شد."
 
 CUSTOMER_ADD_FAILED_TEXT = "❌ **خطا در ثبت اطلاعات**\n\nمتأسفانه ثبت اطلاعات مشتری با مشکل مواجه شد.\n\n🔍 دلیل خطا: {error}\n\n📌 لطفاً مجدداً تلاش کنید."
+
+# ========== متن‌های افزایش/کاهش بدهی ==========
+ASK_CUSTOMER_PHONE_FOR_DEBT = "📊 **افزایش/کاهش بدهی مشتری**\n\nلطفاً شماره تلفن مشتری را وارد کنید:"
+
+CUSTOMER_DEBT_INFO_TEXT = "👤 **مشتری:** {name}\n📞 **شماره:** {phone}\n💰 **بدهی فعلی:** {total_debt:,} تومان\n\nچه عملیاتی انجام میدهید؟"
+
+ASK_INCREASE_AMOUNT_TEXT = "➕ **افزایش بدهی برای {name}**\n\n💰 مبلغ بدهی جدید را وارد کنید:"
+ASK_INCREASE_REASON_TEXT = "📝 علت افزایش بدهی را وارد کنید:"
+
+ASK_DECREASE_AMOUNT_TEXT = "➖ **کاهش بدهی برای {name}**\n\n💰 مبلغ پرداختی را وارد کنید:"
+ASK_DECREASE_REASON_TEXT = "📝 توضیحات (اختیاری):"
+
+CONFIRM_DEBT_TRANSACTION_TEXT = "📋 **لطفاً اطلاعات را تأیید کنید:**\n\n👤 مشتری: {name}\n📞 شماره: {phone}\n💰 بدهی فعلی: {current_debt:} تومان\n\n🔄 نوع تراکنش: {type}\n💰 مبلغ: {amount:} تومان\n📝 {reason_label}: {reason}\n\n💰 **بدهی جدید: {new_debt:} تومان**"
+
+DEBT_TRANSACTION_SUCCESS_TEXT = "✅ **تراکنش با موفقیت ثبت شد**\n\n👤 مشتری: {name}\n🔄 نوع: {type}\n💰 مبلغ: {amount:} تومان\n💰 بدهی فعلی: {new_debt:} تومان\n\n🕒 تاریخ: {date}"
+
+CUSTOMER_NOT_FOUND_TEXT = "❌ مشتری با شماره «{phone}» یافت نشد.\n\nلطفاً شماره را درست وارد کنید یا ابتدا مشتری را ثبت کنید."
+
+INVALID_AMOUNT_ERROR_TEXT = "❌ لطفاً یک عدد معتبر وارد کنید.\n\n🔙 روی دکمه بازگشت کلیک کنید."
+
+AMOUNT_EXCEEDS_DEBT_ERROR_TEXT = "❌ مبلغ پرداختی نمی‌تواند از بدهی فعلی بیشتر باشد.\n\n🔙 روی دکمه بازگشت کلیک کنید."
+
+INVALID_NUMBER_ERROR_TEXT = "❌ لطفاً یک عدد معتبر وارد کنید.\n\n🔙 روی دکمه بازگشت کلیک کنید."

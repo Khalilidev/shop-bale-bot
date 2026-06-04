@@ -17,6 +17,7 @@ from datetime import datetime
 
 user_state = {}
 temp_customer = {}
+temp_transaction = {}
 
 bot = Bot(TOKEN)
 
@@ -63,7 +64,84 @@ async def on_message(message: Message):
                     amount=temp_customer[message.chat.id]["amount"],
                     reason=temp_customer[message.chat.id]["reason"]),components=apply_customer())       
             return
-        
+        elif user_state[message.chat.id] == "waiting_for_customer_phone":
+            from handlers.get_customer_debt import get_customer_by_phone, get_total_debt
+            
+            customer = get_customer_by_phone(message.text)
+            if not customer:
+                await message.reply(CUSTOMER_NOT_FOUND_TEXT.format(phone=message.text), components=back_btn())
+                user_state[message.chat.id] = None
+                return
+            
+            total_debt = get_total_debt(customer["id"])
+            temp_transaction[message.chat.id] = {
+                "customer_id": customer["id"],
+                "customer_name": customer["name"],
+                "customer_phone": customer["phone"],
+                "current_debt": total_debt}
+            user_state[message.chat.id] = "waiting_for_debt_operation"
+            await message.reply(
+                CUSTOMER_DEBT_INFO_TEXT.format(
+                    name=customer["name"],
+                    phone=customer["phone"],
+                    total_debt=total_debt),components=debt_operation_buttons())
+        elif user_state[message.chat.id] == "waiting_for_increase_amount":
+            try:
+                amount = int(message.text)
+                temp_transaction[message.chat.id]["amount"] = amount
+                user_state[message.chat.id] = "waiting_for_increase_reason"
+                await message.reply(
+                    ASK_INCREASE_REASON_TEXT.format(name=temp_transaction[message.chat.id]["customer_name"]),
+                    components=back_btn())
+            except ValueError:
+                await message.reply(INVALID_AMOUNT_ERROR_TEXT, components=back_btn())
+        elif user_state[message.chat.id] == "waiting_for_increase_reason":
+            temp_transaction[message.chat.id]["reason"] = message.text
+            current = temp_transaction[message.chat.id]["current_debt"]
+            amount = temp_transaction[message.chat.id]["amount"]
+            new_debt = current + amount
+            
+            await message.reply(
+                CONFIRM_DEBT_TRANSACTION_TEXT.format(
+                    name=temp_transaction[message.chat.id]["customer_name"],
+                    phone=temp_transaction[message.chat.id]["customer_phone"],
+                    current_debt=current,
+                    type="➕ افزایش بدهی",
+                    amount=amount,
+                    reason_label="علت افزایش",
+                    reason=message.text,
+                    new_debt=new_debt),components=confirm_debt_buttons())
+            user_state[message.chat.id] = "waiting_for_confirm_debt"
+        elif user_state[message.chat.id] == "waiting_for_decrease_amount":
+            try:
+                amount = int(message.text)
+                if amount > temp_transaction[message.chat.id]["current_debt"]:
+                    await message.reply(AMOUNT_EXCEEDS_DEBT_ERROR_TEXT, components=back_btn())
+                    return
+                temp_transaction[message.chat.id]["amount"] = amount
+                user_state[message.chat.id] = "waiting_for_decrease_reason"
+                await message.reply(
+                    ASK_DECREASE_REASON_TEXT.format(name=temp_transaction[message.chat.id]["customer_name"]),
+                    components=back_btn())
+            except ValueError:
+                await message.reply(INVALID_NUMBER_ERROR_TEXT, components=back_btn())
+        elif user_state[message.chat.id] == "waiting_for_decrease_reason":
+            temp_transaction[message.chat.id]["reason"] = message.text if message.text else "پرداخت بدهی"
+            current = temp_transaction[message.chat.id]["current_debt"]
+            amount = temp_transaction[message.chat.id]["amount"]
+            new_debt = current - amount
+            await message.reply(
+                CONFIRM_DEBT_TRANSACTION_TEXT.format(
+                    name=temp_transaction[message.chat.id]["customer_name"],
+                    phone=temp_transaction[message.chat.id]["customer_phone"],
+                    current_debt=current,
+                    type="➖ کاهش بدهی",
+                    amount=amount,
+                    reason_label="توضیحات",
+                    reason=temp_transaction[message.chat.id]["reason"],
+                    new_debt=new_debt),components=confirm_debt_buttons())
+            user_state[message.chat.id] = "waiting_for_confirm_debt"
+
     if message.text == '/start':
         if is_seller(message.chat.id):
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
@@ -93,6 +171,43 @@ async def on_callback(callback: CallbackQuery):
                 date=datetime.now().strftime("%Y/%m/%d")), components=back_btn())
         except:
             await callback.message.edit(CUSTOMER_ADD_FAILED_TEXT, components=back_btn())
+            
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER:
+        user_state[callback.message.chat.id] = "waiting_for_customer_phone"
+        temp_transaction[callback.message.chat.id] = {}
+        await callback.message.edit(ASK_CUSTOMER_PHONE_FOR_DEBT, components=back_btn())
+
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK_INCREASE_DEBT:
+        temp_transaction[callback.message.chat.id]["type"] = "increase"
+        user_state[callback.message.chat.id] = "waiting_for_increase_amount"
+        await callback.message.edit(
+            ASK_INCREASE_AMOUNT_TEXT.format(name=temp_transaction[callback.message.chat.id]["customer_name"]),components=back_btn())
+
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK_DECREASE_DEBT:
+        temp_transaction[callback.message.chat.id]["type"] = "decrease"
+        user_state[callback.message.chat.id] = "waiting_for_decrease_amount"
+        await callback.message.edit(
+            ASK_DECREASE_AMOUNT_TEXT.format(name=temp_transaction[callback.message.chat.id]["customer_name"]),components=back_btn())
+        
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK_CONFIRM_DEBT:
+        from handlers.get_customer_debt import add_transaction
+        trans = temp_transaction[callback.message.chat.id]
+        if trans["type"] == "increase":
+            amount = trans["amount"]
+            type_text = "افزایش بدهی"
+        else:
+            amount = -trans["amount"]
+            type_text = "کاهش بدهی"
+        add_transaction(trans["customer_id"], amount, trans["reason"])
+        await callback.message.edit(
+            DEBT_TRANSACTION_SUCCESS_TEXT.format(
+                name=trans["customer_name"],
+                type=type_text,
+                amount=trans["amount"],
+                new_debt=trans["current_debt"] + amount,
+                date=datetime.now().strftime("%Y/%m/%d")),components=back_btn())
+        user_state[callback.message.chat.id] = None
+        temp_transaction.pop(callback.message.chat.id, None)
 
 if __name__ == "__main__":
     bot.run()

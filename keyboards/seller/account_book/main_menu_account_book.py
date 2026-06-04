@@ -35,3 +35,24 @@ def back_btn():
     keyboard.add(btn1, row=1)
 
     return keyboard
+
+def debt_operation_buttons():
+    keyboard = InlineKeyboardMarkup()
+
+    btn1 = InlineKeyboardButton("➕ افزایش بدهی", callback_data=CB_SELLER_ACCOUNT_BOOK_INCREASE_DEBT)
+    btn2 = InlineKeyboardButton("➖ کاهش بدهی", callback_data=CB_SELLER_ACCOUNT_BOOK_DECREASE_DEBT)
+    btn3 = InlineKeyboardButton("🔙 بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
+
+    keyboard.add(btn1, row=1)
+    keyboard.add(btn2, row=2)
+    keyboard.add(btn3, row=3)
+
+    return keyboard
+
+def confirm_debt_buttons():
+    keyboard = InlineKeyboardMarkup()
+    btn1 = InlineKeyboardButton("✅ تأیید و ثبت", callback_data=CB_SELLER_ACCOUNT_BOOK_CONFIRM_DEBT)
+    btn2 = InlineKeyboardButton("🔙 انصراف", callback_data=CB_SELLER_ACCOUNT_BOOK)
+    keyboard.add(btn1, row=1)
+    keyboard.add(btn2, row=2)
+    return keyboard
