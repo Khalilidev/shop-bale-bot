@@ -16,7 +16,11 @@ CUSTOMER_PHONE_RECEIVED_TEXT = "✅ شماره تماس «{phone}» با موف�
 
 # مرحله 3: دریافت مبلغ بدهی
 ASK_CUSTOMER_DEBT_TEXT = "💰 لطفاً مبلغ بدهی مشتری را وارد کنید:\n(مبلغ را به تومان وارد کنید)\nمثال: 500000"
-CUSTOMER_DEBT_RECEIVED_TEXT = "✅ مبلغ بدهی {amount:,} تومان ثبت شد."
+CUSTOMER_DEBT_RECEIVED_TEXT = "✅ مبلغ بدهی {amount:} تومان ثبت شد."
 
-# مرحله 4: تأیید نهایی
-CUSTOMER_INFO_CONFIRM_TEXT = "📋 **لطفاً اطلاعات وارد شده را تأیید کنید:**\n\n👤 نام: {name}\n📞 شماره تماس: {phone}\n💰 بدهی: {amount:,} تومان\n\nآیا اطلاعات فوق صحیح است؟"
+# مرحله 4: دریافت علت بدهی (جدید)
+ASK_CUSTOMER_REASON_TEXT = "📝 لطفاً علت بدهی را وارد کنید:\n(مثال: خرید کالا، قرض، چک برگشتی و ...)"
+CUSTOMER_REASON_RECEIVED_TEXT = "✅ علت بدهی ثبت شد."
+
+# مرحله 5: تأیید نهایی (با اضافه شدن reason)
+CUSTOMER_INFO_CONFIRM_TEXT = "📋 **لطفاً اطلاعات وارد شده را تأیید کنید:**\n\n👤 نام: {name}\n📞 شماره تماس: {phone}\n💰 بدهی: {amount:} تومان\n📝 علت بدهی: {reason}\n\nآیا اطلاعات فوق صحیح است؟"
