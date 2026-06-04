@@ -3,7 +3,15 @@ import sqlite3
 def init_db():
     conn = sqlite3.connect("database.db")
     cur = conn.cursor()
-    
+    """
+    create or load the database when bot when starting the program.
+
+    Args:
+        None
+
+    Returns:
+        None
+    """
     # جدول اول: مشتری‌ها
     cur.execute("""CREATE TABLE IF NOT EXISTS customers(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,

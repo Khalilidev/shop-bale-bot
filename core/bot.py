@@ -23,6 +23,13 @@ bot = Bot(TOKEN)
 
 @bot.event
 async def on_message(message: Message):
+    """
+    Chek the received message from the user and run it's code.
+
+    Args:
+        message(Message):
+            Received message from the user.
+    """
     print(f"Message from {message.chat.id}")
     if is_seller(message.chat.id) and message.chat.id in user_state:
         if user_state[message.chat.id] == "waiting_for_name":
@@ -148,6 +155,13 @@ async def on_message(message: Message):
 
 @bot.event
 async def on_callback(callback: CallbackQuery):
+    """
+    Check the callback and run it's code.
+
+    Args:
+        callback(CallbackQuery):
+            Received callback from clicked button by user.
+    """
     if callback.data == CB_SELLER_ACCOUNT_BOOK:
         await callback.message.edit(ACCOUNT_BOOK_TEXT, components=main_menu_account_book())
 

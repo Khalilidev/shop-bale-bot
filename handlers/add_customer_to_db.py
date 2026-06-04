@@ -1,5 +1,21 @@
 import sqlite3
-def add_customer(name:str, phone:int, amount:int, reason:str):
+def add_customer(name:str, phone:str, amount:int, reason:str):
+    """
+    Add new customer to database if not exists or update the amount.
+
+    Args:
+        name(str):
+            name of customer.
+        phone(str):
+            phone number of customer.
+        amount(int):
+            new amount received from seller.
+        reason(str):
+            reason of the amount.
+
+    Returns:
+        None
+    """
     conn = sqlite3.connect("database.db")
     cur = conn.cursor()
 

@@ -1,3 +1,4 @@
+# in this file you can handle and create the callbacks for keyboards and (bot.py -> on_callback) function.
 CB_SELLER_ACCOUNT_BOOK_ADD_CUSTOMER = "seller:account_book:add_customer"
 CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER = "seller:account_book:edit_customer"
 CB_SELLER_ACCOUNT_BOOK_GET_PDF = "seller:account_book:get_pdf"
