@@ -1,13 +1,14 @@
 from bale import InlineKeyboardButton, InlineKeyboardMarkup
 from callbacks.cb_seller_account_book import *
 from callbacks.cb_main_menu_seller import CB_SELLER_ACCOUNT_BOOK
+
 def main_menu_account_book():
     keyboard = InlineKeyboardMarkup()
 
-    btn1 = InlineKeyboardButton("افزودن مشتری", callback_data=CB_SELLER_ACCOUNT_BOOK_ADD_CUSTOMER)
-    btn2 = InlineKeyboardButton("ویرایش حساب مشتری", callback_data= CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER)
-    btn3 = InlineKeyboardButton("دریافت PDF حساب ها", callback_data= CB_SELLER_ACCOUNT_BOOK_GET_PDF)
-    btn4 = InlineKeyboardButton("بازگشت به منوی قبلی ",callback_data= CB_BACK_TO_MAIN_MENU_SELLER)
+    btn1 = InlineKeyboardButton("➕ افزودن مشتری جدید", callback_data=CB_SELLER_ACCOUNT_BOOK_ADD_CUSTOMER)
+    btn2 = InlineKeyboardButton("📊 افزایش/کاهش بدهی مشتری", callback_data=CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER)
+    btn3 = InlineKeyboardButton("📄 دریافت PDF حساب ها", callback_data=CB_SELLER_ACCOUNT_BOOK_GET_PDF)
+    btn4 = InlineKeyboardButton("🔙 بازگشت به منوی قبلی", callback_data=CB_BACK_TO_MAIN_MENU_SELLER)
 
     keyboard.add(btn1, row=1)
     keyboard.add(btn2, row=2)
@@ -18,8 +19,8 @@ def main_menu_account_book():
 def apply_customer():
     keyboard = InlineKeyboardMarkup()
 
-    btn1 = InlineKeyboardButton("ثبت اطلاعات", callback_data=CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER)
-    btn2 = InlineKeyboardButton("بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
+    btn1 = InlineKeyboardButton("✅ ثبت اطلاعات", callback_data=CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER)
+    btn2 = InlineKeyboardButton("🔙 بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
 
     keyboard.add(btn1, row=1)
     keyboard.add(btn2, row=2)
@@ -29,7 +30,7 @@ def apply_customer():
 def back_btn():
     keyboard = InlineKeyboardMarkup()
 
-    btn1 = InlineKeyboardButton("بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
+    btn1 = InlineKeyboardButton("🔙 بازگشت", callback_data=CB_SELLER_ACCOUNT_BOOK)
 
     keyboard.add(btn1, row=1)
 
