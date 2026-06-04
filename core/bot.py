@@ -209,5 +209,11 @@ async def on_callback(callback: CallbackQuery):
         user_state[callback.message.chat.id] = None
         temp_transaction.pop(callback.message.chat.id, None)
 
+
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK_GET_PDF:
+        from handlers.customer_debt_report import send_customers_debt_pdf
+        await send_customers_debt_pdf(callback) 
+
+
 if __name__ == "__main__":
     bot.run()
