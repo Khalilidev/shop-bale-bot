@@ -20,7 +20,7 @@
 ## تکنولوژی‌های مورد استفاده
 
 - Python 3.12
-- balebot
+- python-bale-bot
 - reportlab
 - arabic_reshaper
 - python-bidi
