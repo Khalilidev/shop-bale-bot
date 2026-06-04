@@ -1,0 +1,4 @@
+python-bale-bot==2.5.0
+reportlab==4.5.1
+arabic-reshaper==3.0.1
+python-bidi==0.6.10
