@@ -1,6 +1,6 @@
 from bale import InlineKeyboardButton, InlineKeyboardMarkup
 from callbacks.cb_seller_account_book import *
-from callbacks.cb_main_menu_seller import CB_BACK_TO_MAIN_MENU_SELLER
+from callbacks.cb_main_menu_seller import *
 
 def main_menu_account_book():
     keyboard = InlineKeyboardMarkup()
