@@ -162,7 +162,13 @@ async def on_callback(callback: CallbackQuery):
         callback(CallbackQuery):
             Received callback from clicked button by user.
     """
-    if callback.data == CB_SELLER_ACCOUNT_BOOK:
+    # ========== SELLER MAIN MENU ==========
+
+    if callback.data == CB_BACK_TO_MAIN_MENU_SELLER:
+        await callback.message.edit(WELCOME_SELLER_TEXT, components=main_menu_seller())
+    # ========== ACCOUNT BOOK ==========
+
+    elif callback.data == CB_SELLER_ACCOUNT_BOOK:
         await callback.message.edit(ACCOUNT_BOOK_TEXT, components=main_menu_account_book())
 
     elif callback.data == CB_SELLER_ACCOUNT_BOOK_ADD_CUSTOMER:
@@ -228,6 +234,9 @@ async def on_callback(callback: CallbackQuery):
         from handlers.customer_debt_report import send_customers_debt_pdf
         await send_customers_debt_pdf(callback) 
 
+    # ========== PRODUCTS MANAGMENT ==========
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT:
+        await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, )
 
 if __name__ == "__main__":
     bot.run()
