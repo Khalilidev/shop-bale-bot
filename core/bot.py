@@ -5,6 +5,7 @@ from core.logging import is_seller
 
 from keyboards.seller.account_book.main_menu_account_book import *
 from keyboards.seller.main_menu_seller import *
+from keyboards.seller.products_managment.prodocts_managment_keyboards import *
 
 from texts.seller_texts import *
 
@@ -236,7 +237,24 @@ async def on_callback(callback: CallbackQuery):
 
     # ========== PRODUCTS MANAGMENT ==========
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT:
-        await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, )
+        await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, components=main_menu_products_managment())
+
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_ADD_ECXEL:
+        pass
+
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_ADD_PRODUCT:
+        pass
+
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRODUCTS_LIST:
+        pass
+    
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRICE_CHANGE:
+        pass
+
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_APPLY_DISCOUNT:
+        pass
+    
+
 
 if __name__ == "__main__":
     bot.run()

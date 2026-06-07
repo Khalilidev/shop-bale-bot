@@ -2,7 +2,6 @@
 CB_SELLER_ACCOUNT_BOOK_ADD_CUSTOMER = "seller:account_book:add_customer"
 CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER = "seller:account_book:edit_customer"
 CB_SELLER_ACCOUNT_BOOK_GET_PDF = "seller:account_book:get_pdf"
-CB_BACK_TO_MAIN_MENU_SELLER = "seller:main_menu"
 CB_SELLER_ACCOUNT_BOOK_APPLY_CUSTOMER = "seller:main_menu(save info)"
 CB_SELLER_ACCOUNT_BOOK_EDIT_CUSTOMER = "cb_seller_account_book_edit_customer"
 CB_SELLER_ACCOUNT_BOOK_INCREASE_DEBT = "cb_seller_account_book_increase_debt"

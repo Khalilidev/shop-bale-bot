@@ -12,8 +12,10 @@ def main_menu_seller():
     """
     keyboard = InlineKeyboardMarkup()
 
-    btn1 = InlineKeyboardButton("دفتر حساب", callback_data=CB_SELLER_ACCOUNT_BOOK)
+    btn1 = InlineKeyboardButton("مدیریت محصولات", callback_data=CB_SELLER_PRODUCTS_MANAGMENT)
+    btn2 = InlineKeyboardButton("دفتر حساب", callback_data=CB_SELLER_ACCOUNT_BOOK)
 
     keyboard.add(btn1, row=1)
-    
+    keyboard.add(btn2, row=2)
+
     return keyboard
