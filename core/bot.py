@@ -19,6 +19,7 @@ from datetime import datetime
 user_state = {}
 temp_customer = {}
 temp_transaction = {}
+temp_ecxel = {}
 
 bot = Bot(TOKEN)
 
@@ -33,6 +34,8 @@ async def on_message(message: Message):
     """
     print(f"Message from {message.chat.id}")
     if is_seller(message.chat.id) and message.chat.id in user_state:
+
+        # ========== Get customer info
         if user_state[message.chat.id] == "waiting_for_name":
             if message.chat.id not in temp_customer:
                 temp_customer[message.chat.id] = {}
@@ -150,6 +153,20 @@ async def on_message(message: Message):
                     new_debt=new_debt),components=confirm_debt_buttons())
             user_state[message.chat.id] = "waiting_for_confirm_debt"
 
+        # ========== Receive ecxel ==========
+        elif user_state[message.chat.id] == "waiting_for_ecxel":
+            if message.document:
+                file_name = message.document.file_name
+                file_extension = file_name.split('.')[-1].lower()
+                if file_extension in ['xlsx', 'csv']:
+                    await message.reply(EXCEL_RECEIVED_TEXT.format(file_name=file_name, file_extension=file_extension),components=back_products_managment_menu())
+                    user_state[message.chat.id] = None
+                else:
+                    await message.reply(EXCEL_INVALID_TEXT.format(file_extension=file_extension),components=back_products_managment_menu())
+                    user_state[message.chat.id] = None
+            else:
+                await message.reply(EXCEL_NO_FILE_TEXT,components=back_products_managment_menu())
+                user_state[message.chat.id] = None
     if message.text == '/start':
         if is_seller(message.chat.id):
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
@@ -240,8 +257,9 @@ async def on_callback(callback: CallbackQuery):
         await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, components=main_menu_products_managment())
 
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_ADD_ECXEL:
-        pass
-
+        user_state[callback.message.chat.id] = "waiting_for_ecxel"
+        await callback.message.edit(EXCEL_UPLOAD_GUIDE_TEXT, components=back_products_managment_menu())
+        
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_ADD_PRODUCT:
         pass
 
