@@ -20,6 +20,7 @@ user_state = {}
 temp_customer = {}
 temp_transaction = {}
 temp_ecxel = {}
+temp_product = {}
 
 bot = Bot(TOKEN)
 
@@ -152,7 +153,7 @@ async def on_message(message: Message):
                     reason=temp_transaction[message.chat.id]["reason"],
                     new_debt=new_debt),components=confirm_debt_buttons())
             user_state[message.chat.id] = "waiting_for_confirm_debt"
-
+        
         # ========== Receive ecxel ==========
         elif user_state[message.chat.id] == "waiting_for_ecxel":
             if message.document:
@@ -167,8 +168,54 @@ async def on_message(message: Message):
             else:
                 await message.reply(EXCEL_NO_FILE_TEXT,components=back_products_managment_menu())
                 user_state[message.chat.id] = None
+        
+        # ========== Add product ==========
+        elif user_state[message.chat.id] == "waiting_for_product_name":
+            temp_product[message.chat.id]["product_name"] = message.text
+            user_state[message.chat.id] = "waiting_for_product_brand"
+            await message.reply(ASK_PRODUCT_BRAND_TEXT, components=back_products_managment_menu())
+
+        elif user_state[message.chat.id] == "waiting_for_product_brand":
+            temp_product[message.chat.id]["product_brand"] = message.text
+            user_state[message.chat.id] = "waiting_for_price"
+            await message.reply(ASK_PRODUCT_PRICE_TEXT, components=back_products_managment_menu())
+
+        elif user_state[message.chat.id] == "waiting_for_price":
+            temp_product[message.chat.id]["product_price"] = message.text
+            user_state[message.chat.id] = "waiting_for_stock"
+            await message.reply(ASK_PRODUCT_STOCK_TEXT, components=back_products_managment_menu())
+
+        elif user_state[message.chat.id] == "waiting_for_stock":
+            temp_product[message.chat.id]["product_stock"] = message.text
+            user_state[message.chat.id] = "waiting_for_description"
+            await message.reply(ASK_PRODUCT_DESCRIPTION_TEXT, components=back_products_managment_menu())
+
+        elif user_state[message.chat.id] == "waiting_for_description":
+            temp_product[message.chat.id]["product_description"] = message.text
+            user_state[message.chat.id] = "waiting_for_image"
+            await message.reply(ASK_PRODUCT_IMAGE_TEXT, components=back_products_managment_menu())
+
+        elif user_state[message.chat.id] == "waiting_for_image":
+            if message.photos:
+                temp_product[message.chat.id]["product_image"] = message.photos
+                user_state[message.chat.id] = "waiting_for_product_confirm"
+                await message.reply(
+                    PRODUCT_CONFIRM_TEXT.format(
+                        name=temp_product[message.chat.id]["product_name"],
+                        brand=temp_product[message.chat.id]["product_brand"],
+                        price=temp_product[message.chat.id]["product_price"],
+                        stock=temp_product[message.chat.id]["product_stock"],
+                        desc=temp_product[message.chat.id]["product_description"]),components=apply_products())
+            else:
+                await message.reply(INVALID_IMAGE_TEXT, components=back_products_managment_menu())
     if message.text == '/start':
         if is_seller(message.chat.id):
+            user_state[message.chat.id] = {}
+            temp_customer[message.chat.id] = {}
+            temp_transaction[message.chat.id] = {}
+            temp_ecxel[message.chat.id] = {}
+            temp_product[message.chat.id] = {}
+
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
 
 @bot.event
@@ -261,7 +308,9 @@ async def on_callback(callback: CallbackQuery):
         await callback.message.edit(EXCEL_UPLOAD_GUIDE_TEXT, components=back_products_managment_menu())
         
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_ADD_PRODUCT:
-        pass
+        user_state[callback.message.chat.id] = "waiting_for_product_name"
+        temp_product[callback.message.chat.id] = {}
+        await callback.message.edit(ASK_PRODUCT_NAME_TEXT, components=back_products_managment_menu())
 
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRODUCTS_LIST:
         pass
@@ -271,8 +320,10 @@ async def on_callback(callback: CallbackQuery):
 
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_APPLY_DISCOUNT:
         pass
-    
 
+    elif callback.data == CB_SELLER_APPLY_PRODUCTS:
+        #! Adding products to database(coming soon!)
+        await callback.message.edit(PRODUCT_SAVED_SUCCESS_TEXT, components=back_products_managment_menu())
 
 if __name__ == "__main__":
     bot.run()

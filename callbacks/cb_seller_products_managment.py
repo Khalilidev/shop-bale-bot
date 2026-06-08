@@ -3,3 +3,4 @@ CB_SELLER_PRODUCTS_MANAGMENT_ADD_PRODUCT = "seller:products_managment:add_one_pr
 CB_SELLER_PRODUCTS_MANAGMENT_PRODUCTS_LIST = "seller:products_managment:products_list"
 CB_SELLER_PRODUCTS_MANAGMENT_PRICE_CHANGE = "seller:products_managment:price_change"
 CB_SELLER_PRODUCTS_MANAGMENT_APPLY_DISCOUNT = "seller:prodocts_managment:apply_discount"
+CB_SELLER_APPLY_PRODUCTS = "seller:product_managment:apply_products"

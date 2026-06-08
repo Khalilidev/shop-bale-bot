@@ -46,3 +46,21 @@ def back_products_managment_menu():
     keyboard.add(btn1, row=1)
 
     return keyboard
+
+def apply_products():
+    """
+    Create a keyboard for applying entered product with the received back btn.
+    Args:
+        None
+    Returns:
+        keyboard(InlineKeyboardMarkup): A keyboard with back & apply btns.
+    """
+    keyboard = InlineKeyboardMarkup()
+
+    btn1 = InlineKeyboardButton("🔙 بازگشت", callback_data=CB_SELLER_PRODUCTS_MANAGMENT)
+    btn2 = InlineKeyboardButton("✅ ثبت اطلاعات محصول", callback_data=CB_SELLER_APPLY_PRODUCTS)
+
+    keyboard.add(btn1, row=1)
+    keyboard.add(btn2, row=2)
+
+    return keyboard
