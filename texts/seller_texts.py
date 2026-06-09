@@ -146,3 +146,5 @@ PRODUCT_PRICE_STOCK_UPDATED_TEXT = (
     "🆔 **شناسه محصول:** {product_id}\n"
     "💰 **قیمت جدید:** {new_price:,} تومان\n"
     "📦 **موجودی جدید:** {new_stock} عدد\n")
+
+IMAGE_SAVE_ERROR_TEXT = "❌ خطا در ذخیره عکس. لطفاً دوباره تلاش کنید."

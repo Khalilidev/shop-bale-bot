@@ -216,15 +216,33 @@ async def on_message(message: Message):
 
         elif user_state[message.chat.id] == "waiting_for_image":
             if message.photos:
-                temp_product[message.chat.id]["product_image"] = message.photos
-                user_state[message.chat.id] = "waiting_for_product_confirm"
-                await message.reply(
-                    PRODUCT_CONFIRM_TEXT.format(
-                        name=temp_product[message.chat.id]["product_name"],
-                        brand=temp_product[message.chat.id]["product_brand"],
-                        price=temp_product[message.chat.id]["product_price"],
-                        stock=temp_product[message.chat.id]["product_stock"],
-                        desc=temp_product[message.chat.id]["product_description"]),components=apply_products())
+                photo = message.photos[-1]
+                try:
+                    file_content = await bot.get_file(photo.file_id)
+                    product_name = temp_product[message.chat.id].get("product_name", "unknown")
+                    safe_name = "".join(c for c in product_name if c.isalnum() or c in (' ', '-', '_')).rstrip()
+                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                    filename = f"{safe_name}_{timestamp}.jpg"
+                    IMAGES_FOLDER = "products_images"
+                    if not os.path.exists(IMAGES_FOLDER):
+                        os.makedirs(IMAGES_FOLDER)
+                    filepath = os.path.join(IMAGES_FOLDER, filename)
+                    with open(filepath, 'wb') as f:
+                        f.write(file_content)
+                    temp_product[message.chat.id]["product_image_path"] = filepath
+                    temp_product[message.chat.id]["product_image"] = photo.file_id
+                    print(f"image saved in : {filepath}")
+                    user_state[message.chat.id] = "waiting_for_product_confirm"
+                    await message.reply(
+                        PRODUCT_CONFIRM_TEXT.format(
+                            name=temp_product[message.chat.id]["product_name"],
+                            brand=temp_product[message.chat.id]["product_brand"],
+                            price=temp_product[message.chat.id]["product_price"],
+                            stock=temp_product[message.chat.id]["product_stock"],
+                            desc=temp_product[message.chat.id]["product_description"]),components=apply_products())
+                except Exception as e:
+                    print(f" خطا در ذخیره عکس: {e}")
+                    await message.reply(IMAGE_SAVE_ERROR_TEXT, components=back_products_managment_menu())
             else:
                 await message.reply(INVALID_IMAGE_TEXT, components=back_products_managment_menu())
     if message.text == '/start':
