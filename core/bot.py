@@ -19,11 +19,15 @@ from datetime import datetime
 import os  # اضافه کن
 from datetime import datetime
 
+from handlers.product_editor import get_product_by_id, get_delete_confirmation_keyboard, delete_product
+from keyboards.seller.products_managment.prodocts_managment_keyboards import edit_product_back_keyboard
+
 user_state = {}
 temp_customer = {}
 temp_transaction = {}
 temp_ecxel = {}
 temp_product = {}
+temp_id = {}
 
 bot = Bot(TOKEN)
 
@@ -245,14 +249,134 @@ async def on_message(message: Message):
                     await message.reply(IMAGE_SAVE_ERROR_TEXT, components=back_products_managment_menu())
             else:
                 await message.reply(INVALID_IMAGE_TEXT, components=back_products_managment_menu())
+        # ========== Edit product ==========
+        elif user_state[message.chat.id] == "waiting_for_product_id":
+            try:
+                product_id = int(message.text.strip())
+                from handlers.product_editor import get_product_by_id, format_product_info, get_product_edit_keyboard
+                
+                product = get_product_by_id(product_id)
+                
+                if product:
+                    has_image = bool(product.get("path_image") and os.path.exists(product.get("path_image", "")))
+                    info_text = format_product_info(product)
+                    
+                    await message.reply(
+                        info_text,
+                        components=get_product_edit_keyboard(product_id, has_image)
+                    )
+                    user_state[message.chat.id] = None
+                else:
+                    await message.reply(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+                    user_state[message.chat.id] = None
+            except ValueError:
+                await message.reply("❌ لطفاً یک عدد معتبر به عنوان شناسه محصول وارد کنید.\nمثال: 123", components=back_products_managment_menu())
+        # ========== Edit product - receive new values ==========
+        state = user_state[message.chat.id]
+        if state and isinstance(state, str):
+            if state.startswith("edit_product_name:"):
+                product_id = int(state.split(":")[-1])
+                new_name = message.text.strip()
+                
+                if new_name:
+                    from handlers.product_editor import update_product_field
+                    if update_product_field(product_id, "name", new_name):
+                        await message.reply(FIELD_UPDATED_SUCCESS_TEXT.format(field="نام", new_value=new_name), components=back_products_managment_menu())
+                    else:
+                        await message.reply(PRODUCT_UPDATE_NAME_ERROR_TEXT, components=back_products_managment_menu())
+                else:
+                    await message.reply(PRODUCT_EMPTY_NAME_ERROR_TEXT, components=back_products_managment_menu())
+                user_state[message.chat.id] = None
+
+            elif state.startswith("edit_product_brand:"):
+                product_id = int(state.split(":")[-1])
+                new_brand = message.text.strip()
+                
+                if new_brand:
+                    from handlers.product_editor import update_product_field
+                    if update_product_field(product_id, "brand", new_brand):
+                        await message.reply(FIELD_UPDATED_SUCCESS_TEXT.format(field="برند", new_value=new_brand), components=back_products_managment_menu())
+                    else:
+                        await message.reply(PRODUCT_UPDATE_BRAND_ERROR_TEXT, components=back_products_managment_menu())
+                else:
+                    await message.reply(PRODUCT_EMPTY_BRAND_ERROR_TEXT, components=back_products_managment_menu())
+                user_state[message.chat.id] = None
+
+            elif state.startswith("edit_product_price:"):
+                product_id = int(state.split(":")[-1])
+                try:
+                    new_price = int(message.text.replace(',', '').replace(' ', ''))
+                    if new_price > 0:
+                        from handlers.product_editor import update_product_field
+                        if update_product_field(product_id, "price", new_price):
+                            await message.reply(FIELD_UPDATED_SUCCESS_TEXT.format(field="قیمت", new_value=f"{new_price:,} تومان"), components=back_products_managment_menu())
+                        else:
+                            await message.reply(PRODUCT_UPDATE_PRICE_ERROR_TEXT, components=back_products_managment_menu())
+                    else:
+                        await message.reply(PRODUCT_PRICE_ZERO_ERROR_TEXT, components=back_products_managment_menu())
+                except ValueError:
+                    await message.reply(INVALID_NUMBER_ERROR_TEXT, components=back_products_managment_menu())
+                user_state[message.chat.id] = None
+
+            elif state.startswith("edit_product_stock:"):
+                product_id = int(state.split(":")[-1])
+                try:
+                    new_stock = int(message.text.replace(',', '').replace(' ', ''))
+                    if new_stock >= 0:
+                        from handlers.product_editor import update_product_field
+                        if update_product_field(product_id, "stock_quantity", new_stock):
+                            await message.reply(FIELD_UPDATED_SUCCESS_TEXT.format(field="موجودی", new_value=f"{new_stock} عدد"), components=back_products_managment_menu())
+                        else:
+                            await message.reply(PRODUCT_UPDATE_STOCK_ERROR_TEXT, components=back_products_managment_menu())
+                    else:
+                        await message.reply(PRODUCT_STOCK_NEGATIVE_ERROR_TEXT, components=back_products_managment_menu())
+                except ValueError:
+                    await message.reply(INVALID_NUMBER_ERROR_TEXT, components=back_products_managment_menu())
+                user_state[message.chat.id] = None
+
+            elif state.startswith("edit_product_description:"):
+                product_id = int(state.split(":")[-1])
+                new_description = message.text.strip()
+                
+                from handlers.product_editor import update_product_field
+                if update_product_field(product_id, "description", new_description):
+                    await message.reply(FIELD_UPDATED_SUCCESS_TEXT.format(field="توضیحات", new_value=new_description if new_description else "(خالی)"), components=back_products_managment_menu())
+                else:
+                    await message.reply(PRODUCT_UPDATE_DESCRIPTION_ERROR_TEXT, components=back_products_managment_menu())
+                user_state[message.chat.id] = None
+
+            elif state.startswith("edit_product_image:"):
+                product_id = int(state.split(":")[-1])
+                
+                if message.photos:
+                    photo = message.photos[-1]
+                    try:
+                        file_content = await bot.get_file(photo.file_id)
+                        product_name = temp_product[message.chat.id].get("product_name", "product")
+                        
+                        from handlers.product_editor import save_product_image
+                        filepath = save_product_image(product_id, file_content, product_name)
+                        
+                        if filepath:
+                            await message.reply(
+                                PRODUCT_IMAGE_UPDATED_SUCCESS_TEXT.format(filepath=filepath),
+                                components=back_products_managment_menu()
+                            )
+                        else:
+                            await message.reply(IMAGE_SAVE_ERROR_TEXT, components=back_products_managment_menu())
+                    except Exception as e:
+                        print(f"Error saving image: {e}")
+                        await message.reply(IMAGE_SAVE_ERROR_TEXT, components=back_products_managment_menu())
+                else:
+                    await message.reply(INVALID_IMAGE_TEXT, components=edit_product_back_keyboard())
+                    return
+                
+                user_state[message.chat.id] = None
+                temp_product.pop(message.chat.id, None)                
+                user_state[message.chat.id] = None
+                temp_product.pop(message.chat.id, None)
     if message.text == '/start':
         if is_seller(message.chat.id):
-            user_state[message.chat.id] = {}
-            temp_customer[message.chat.id] = {}
-            temp_transaction[message.chat.id] = {}
-            temp_ecxel[message.chat.id] = {}
-            temp_product[message.chat.id] = {}
-
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
 
 @bot.event
@@ -353,8 +477,9 @@ async def on_callback(callback: CallbackQuery):
         from handlers.products_report import send_products_report_pdf
         await send_products_report_pdf(callback)
         
-    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRICE_CHANGE:
-        pass
+    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRODUCT_EDIT:
+        user_state[callback.message.chat.id] = "waiting_for_product_id"
+        await callback.message.edit(ASK_PRODUCT_ID_TEXT, components=back_products_managment_menu())
 
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_APPLY_DISCOUNT:
         pass
@@ -408,5 +533,119 @@ async def on_callback(callback: CallbackQuery):
             await callback.message.edit(
                 f"❌ خطا در ثبت محصول:\n\n{result['message']}",
                 components=back_products_managment_menu())
+    # ========== PRODUCT EDITING CALLBACKS ==========
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_NAME + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_name:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id}
+            await callback.message.edit(
+                ASK_NEW_NAME_TEXT.format(current=product['name']),
+                components=edit_product_back_keyboard())
+            
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_BRAND + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_brand:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id}
+            await callback.message.edit(
+                ASK_NEW_BRAND_TEXT.format(current=product['brand']),
+                components=edit_product_back_keyboard())
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_PRICE + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_price:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id}
+            await callback.message.edit(
+                ASK_NEW_PRICE_TEXT.format(current=product['price']),
+                components=edit_product_back_keyboard())
+            
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_STOCK + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_stock:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id}
+            await callback.message.edit(
+                ASK_NEW_STOCK_TEXT.format(current=product['stock']),
+                components=edit_product_back_keyboard())
+            
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_DESCRIPTION + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_description:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id}
+            current_desc = product['description'] if product['description'] else "(بدون توضیحات)"
+            await callback.message.edit(
+                ASK_NEW_DESCRIPTION_TEXT.format(current=current_desc),
+                components=edit_product_back_keyboard())
+            
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_IMAGE + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_image:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id, "product_name": product['name']}
+            await callback.message.edit(
+                ASK_NEW_IMAGE_TEXT,
+                components=edit_product_back_keyboard())
+            
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_DELETE + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            await callback.message.edit(
+                PRODUCT_DELETE_CONFIRM_TEXT.format(product_name=product['name']),
+                components=get_delete_confirmation_keyboard(product_id, product['name']))
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data.startswith(CB_SELLER_PRODUCT_DELETE_CONFIRM + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            if delete_product(product_id):
+                await callback.message.edit(
+                    PRODUCT_DELETED_SUCCESS_TEXT.format(product_id=product_id, product_name=product['name']),
+                    components=back_products_managment_menu())
+            else:
+                await callback.message.edit(PRODUCT_DELETED_FAILED_TEXT, components=back_products_managment_menu())
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+
+    elif callback.data == CB_SELLER_PRODUCT_BACK_TO_MENU:
+        user_state[callback.message.chat.id] = None
+        temp_product.pop(callback.message.chat.id, None)
+        await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, components=main_menu_products_managment())
 if __name__ == "__main__":
     bot.run()

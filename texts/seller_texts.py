@@ -150,3 +150,44 @@ PRODUCT_PRICE_STOCK_UPDATED_TEXT = (
 IMAGE_SAVE_ERROR_TEXT = "❌ خطا در ذخیره عکس. لطفاً دوباره تلاش کنید."
 
 PRODUCTS_REPORT_TEXT = "📊 در حال تولید گزارش محصولات..."
+
+# ========== متن‌های ویرایش محصول ==========
+ASK_PRODUCT_ID_TEXT = "✏️ **ویرایش محصول**\n\nلطفاً شناسه عددی محصول مورد نظر را وارد کنید:\n(مثال: 123)\n\n🔍 می‌توانید شناسه را از لیست محصولات پیدا کنید."
+
+PRODUCT_NOT_FOUND_TEXT = "❌ **محصول یافت نشد**\n\nمحصولی با شناسه `{product_id}` در سیستم وجود ندارد.\n\nلطفاً شناسه صحیح را وارد کنید."
+
+PRODUCT_DELETE_CONFIRM_TEXT = "⚠️ **تأیید حذف محصول**\n\nآیا از حذف محصول «{product_name}» مطمئن هستید؟\n\nاین عمل غیرقابل بازگشت است."
+
+PRODUCT_DELETED_SUCCESS_TEXT = "✅ **محصول با موفقیت حذف شد**\n\n🆔 شناسه: {product_id}\n📝 نام: {product_name}\n\nعکس محصول نیز از سرور حذف شد."
+
+PRODUCT_DELETED_FAILED_TEXT = "❌ **خطا در حذف محصول**\n\nلطفاً مجدداً تلاش کنید."
+
+# متن‌های درخواست اطلاعات جدید برای ویرایش
+ASK_NEW_NAME_TEXT = "✏️ **ویرایش نام محصول**\n\nنام فعلی: {current}\n\nلطفاً نام جدید را وارد کنید:"
+ASK_NEW_BRAND_TEXT = "🏷️ **ویرایش برند محصول**\n\nبرند فعلی: {current}\n\nلطفاً برند جدید را وارد کنید:"
+ASK_NEW_PRICE_TEXT = "💰 **ویرایش قیمت محصول**\n\nقیمت فعلی: {current:,} تومان\n\nلطفاً قیمت جدید را به تومان وارد کنید:"
+ASK_NEW_STOCK_TEXT = "📦 **ویرایش موجودی محصول**\n\nموجودی فعلی: {current} عدد\n\nلطفاً موجودی جدید را وارد کنید:"
+ASK_NEW_DESCRIPTION_TEXT = "📝 **ویرایش توضیحات محصول**\n\nتوضیحات فعلی:\n{current}\n\nلطفاً توضیحات جدید را وارد کنید:"
+ASK_NEW_IMAGE_TEXT = "🖼️ **ویرایش عکس محصول**\n\nلطفاً عکس جدید محصول را ارسال کنید."
+
+# متن موفقیت ویرایش
+FIELD_UPDATED_SUCCESS_TEXT = "✅ {field} محصول با موفقیت به‌روزرسانی شد.\n\nمقدار جدید: {new_value}"
+
+ASK_PRODUCT_ID_TEXT = "✏️ لطفا شناسه محصول را وارد کنید:"
+
+# ========== متن‌های خطاهای ویرایش محصول ==========
+PRODUCT_UPDATE_NAME_ERROR_TEXT = "❌ خطا در به‌روزرسانی نام محصول."
+PRODUCT_EMPTY_NAME_ERROR_TEXT = "❌ نام محصول نمی‌تواند خالی باشد."
+
+PRODUCT_UPDATE_BRAND_ERROR_TEXT = "❌ خطا در به‌روزرسانی برند محصول."
+PRODUCT_EMPTY_BRAND_ERROR_TEXT = "❌ برند محصول نمی‌تواند خالی باشد."
+
+PRODUCT_UPDATE_PRICE_ERROR_TEXT = "❌ خطا در به‌روزرسانی قیمت محصول."
+PRODUCT_PRICE_ZERO_ERROR_TEXT = "❌ قیمت باید بزرگتر از صفر باشد."
+
+PRODUCT_UPDATE_STOCK_ERROR_TEXT = "❌ خطا در به‌روزرسانی موجودی محصول."
+PRODUCT_STOCK_NEGATIVE_ERROR_TEXT = "❌ موجودی نمی‌تواند منفی باشد."
+
+PRODUCT_UPDATE_DESCRIPTION_ERROR_TEXT = "❌ خطا در به‌روزرسانی توضیحات محصول."
+
+PRODUCT_IMAGE_UPDATED_SUCCESS_TEXT = "✅ عکس محصول با موفقیت به‌روزرسانی شد.\n\n📸 مسیر: {filepath}"
