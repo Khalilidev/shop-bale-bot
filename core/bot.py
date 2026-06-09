@@ -16,6 +16,9 @@ from handlers.add_customer_to_db import add_customer
 
 from datetime import datetime
 
+import os  # اضافه کن
+from datetime import datetime
+
 user_state = {}
 temp_customer = {}
 temp_transaction = {}
@@ -154,21 +157,37 @@ async def on_message(message: Message):
                     new_debt=new_debt),components=confirm_debt_buttons())
             user_state[message.chat.id] = "waiting_for_confirm_debt"
         
-        # ========== Receive ecxel ==========
+        # ========== Receive excel ==========
         elif user_state[message.chat.id] == "waiting_for_ecxel":
             if message.document:
                 file_name = message.document.file_name
                 file_extension = file_name.split('.')[-1].lower()
+                
                 if file_extension in ['xlsx', 'csv']:
-                    await message.reply(EXCEL_RECEIVED_TEXT.format(file_name=file_name, file_extension=file_extension),components=back_products_managment_menu())
+                    # دریافت فایل
+                    file_content = await bot.get_file(message.document.file_id)
+                    
+                    # ذخیره فایل موقت
+                    temp_file_path = f"temp_{file_name}"
+                    with open(temp_file_path, 'wb') as f:
+                        f.write(file_content)
+                    
+                    # پردازش فایل
+                    from handlers.add_ecxel_products_to_db import process_excel_file
+                    result = process_excel_file(temp_file_path)
+                    
+                    # حذف فایل موقت
+                    os.remove(temp_file_path)
+                    
+                    # ارسال نتیجه
+                    await message.reply(result["message"], components=back_products_managment_menu())
                     user_state[message.chat.id] = None
                 else:
-                    await message.reply(EXCEL_INVALID_TEXT.format(file_extension=file_extension),components=back_products_managment_menu())
+                    await message.reply(EXCEL_INVALID_TEXT.format(file_extension=file_extension), components=back_products_managment_menu())
                     user_state[message.chat.id] = None
             else:
-                await message.reply(EXCEL_NO_FILE_TEXT,components=back_products_managment_menu())
-                user_state[message.chat.id] = None
-        
+                await message.reply(EXCEL_NO_FILE_TEXT, components=back_products_managment_menu())
+                user_state[message.chat.id] = None        
         # ========== Add product ==========
         elif user_state[message.chat.id] == "waiting_for_product_name":
             temp_product[message.chat.id]["product_name"] = message.text
@@ -322,8 +341,53 @@ async def on_callback(callback: CallbackQuery):
         pass
 
     elif callback.data == CB_SELLER_APPLY_PRODUCTS:
-        #! Adding products to database(coming soon!)
-        await callback.message.edit(PRODUCT_SAVED_SUCCESS_TEXT, components=back_products_managment_menu())
-
+        from handlers.add_product_to_db import add_product_from_dict
+        product_data = temp_product[callback.message.chat.id]
+        try:
+            price_str = str(product_data.get("product_price", "0"))
+            stock_str = str(product_data.get("product_stock", "0"))
+            price_str = price_str.replace(',', '').replace(' ', '')
+            stock_str = stock_str.replace(',', '').replace(' ', '')
+            price = int(price_str)
+            stock = int(stock_str)
+        except ValueError:
+            await callback.message.edit(
+                "❌ خطا: قیمت و موجودی باید عدد باشند.\n\nلطفاً مجدداً تلاش کنید.",
+                components=back_products_managment_menu())
+            return
+        
+        product_dict = {
+            "name": product_data.get("product_name", ""),
+            "brand": product_data.get("product_brand", ""),
+            "price": price,
+            "stock": stock,
+            "description": product_data.get("product_description", ""),
+            "image_path": product_data.get("product_image_path", "")}
+        result = add_product_from_dict(product_dict)
+        if result["success"]:
+            if result["is_new"]:
+                message_text = PRODUCT_ADDED_SUCCESS_TEXT.format(
+                    product_id=result["product_id"],
+                    name=result["name"],
+                    brand=result["brand"],
+                    price=result["price"],
+                    stock=result["stock"])
+            else:
+                message_text = PRODUCT_UPDATED_SUCCESS_TEXT.format(
+                    product_id=result["product_id"],
+                    name=product_data.get("product_name", ""),
+                    brand=product_data.get("product_brand", ""),
+                    old_price=result["old_price"],
+                    new_price=result["new_price"],
+                    old_stock=result["old_stock"],
+                    added_stock=result["added_stock"],
+                    new_stock=result["new_stock"])
+            await callback.message.edit(message_text, components=back_products_managment_menu())
+            user_state[callback.message.chat.id] = None
+            temp_product.pop(callback.message.chat.id, None)
+        else:
+            await callback.message.edit(
+                f"❌ خطا در ثبت محصول:\n\n{result['message']}",
+                components=back_products_managment_menu())
 if __name__ == "__main__":
     bot.run()
