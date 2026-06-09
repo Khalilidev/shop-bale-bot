@@ -350,8 +350,9 @@ async def on_callback(callback: CallbackQuery):
         await callback.message.edit(ASK_PRODUCT_NAME_TEXT, components=back_products_managment_menu())
 
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRODUCTS_LIST:
-        pass
-    
+        from handlers.products_report import send_products_report_pdf
+        await send_products_report_pdf(callback)
+        
     elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_PRICE_CHANGE:
         pass
 

@@ -148,3 +148,5 @@ PRODUCT_PRICE_STOCK_UPDATED_TEXT = (
     "📦 **موجودی جدید:** {new_stock} عدد\n")
 
 IMAGE_SAVE_ERROR_TEXT = "❌ خطا در ذخیره عکس. لطفاً دوباره تلاش کنید."
+
+PRODUCTS_REPORT_TEXT = "📊 در حال تولید گزارش محصولات..."
