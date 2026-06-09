@@ -481,9 +481,6 @@ async def on_callback(callback: CallbackQuery):
         user_state[callback.message.chat.id] = "waiting_for_product_id"
         await callback.message.edit(ASK_PRODUCT_ID_TEXT, components=back_products_managment_menu())
 
-    elif callback.data == CB_SELLER_PRODUCTS_MANAGMENT_APPLY_DISCOUNT:
-        pass
-
     elif callback.data == CB_SELLER_APPLY_PRODUCTS:
         from handlers.add_product_to_db import add_product_from_dict
         product_data = temp_product[callback.message.chat.id]

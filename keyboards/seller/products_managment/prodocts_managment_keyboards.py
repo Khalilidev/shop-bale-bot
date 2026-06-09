@@ -17,14 +17,12 @@ def main_menu_products_managment():
     btn2 = InlineKeyboardButton("➕ افزودن تک محصول", callback_data=CB_SELLER_PRODUCTS_MANAGMENT_ADD_PRODUCT)
     btn3 = InlineKeyboardButton("📋 لیست همه محصولات", callback_data=CB_SELLER_PRODUCTS_MANAGMENT_PRODUCTS_LIST)
     btn4 = InlineKeyboardButton("✏️ ویرایش محصول", callback_data=CB_SELLER_PRODUCTS_MANAGMENT_PRODUCT_EDIT)
-    btn5 = InlineKeyboardButton("🎁 اعمال تخفیف موقت", callback_data=CB_SELLER_PRODUCTS_MANAGMENT_APPLY_DISCOUNT)
     btn6 = InlineKeyboardButton("🔙 بازگشت", callback_data=CB_BACK_TO_MAIN_MENU_SELLER)
 
     keyboard.add(btn1, row=1)
     keyboard.add(btn2, row=2)
     keyboard.add(btn3, row=3)
     keyboard.add(btn4, row=4)
-    keyboard.add(btn5, row=5)
     keyboard.add(btn6, row=6)
 
     return keyboard
