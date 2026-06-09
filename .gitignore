@@ -45,3 +45,7 @@ htmlcov/
 
 # PyInstaller
 *.spec
+
+configs.py
+products_images/
+database.db
