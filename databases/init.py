@@ -43,7 +43,8 @@ def init_db():
     cur.execute("""CREATE TABLE IF NOT EXISTS users(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_name TEXT,
-                user_id INTEGER UNIQUE NOT NULL)""")
+                user_id INTEGER UNIQUE NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP);""")
     
     conn.commit()
     conn.close()
