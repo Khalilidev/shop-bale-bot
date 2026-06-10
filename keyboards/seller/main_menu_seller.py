@@ -15,9 +15,11 @@ def main_menu_seller():
     btn1 = InlineKeyboardButton("مدیریت محصولات", callback_data=CB_SELLER_PRODUCTS_MANAGMENT)
     btn2 = InlineKeyboardButton("دفتر حساب", callback_data=CB_SELLER_ACCOUNT_BOOK)
     btn3 = InlineKeyboardButton("ارسال پیام به مشتریان", callback_data=CB_SELLER_SEND_MESSAGE)
+    btn4 = InlineKeyboardButton("ویرایش راه ارتباطی", callback_data=CB_EDIT_CONTACT)
 
     keyboard.add(btn1, row=1)
     keyboard.add(btn2, row=2)
     keyboard.add(btn3, row=3)
-
+    keyboard.add(btn4, row=4)
+    
     return keyboard

@@ -30,6 +30,7 @@ temp_ecxel = {}
 temp_product = {}
 temp_id = {}
 temp_message = {}
+temp_contact = {}
 
 bot = Bot(TOKEN)
 
@@ -280,6 +281,19 @@ async def on_message(message: Message):
             temp_message[message.chat.id]["message"] = message.text
             from keyboards.seller.send_message.send_message_keyborads import broadcast_confirm_keyboard
             await message.reply(BROADCAST_CONFIRM_TEXT.format(message=message.text), components=broadcast_confirm_keyboard())
+
+        #! ========== Edit contact module ==========
+        elif user_state[message.chat.id] == "waiting_for_edit_contact":
+            if message.chat.id not in temp_contact:
+                temp_contact[message.chat.id] = {}
+            temp_contact[message.chat.id]["contact"] = message.text
+            from handlers.contact import edit_contact
+            from keyboards.seller.send_message.send_message_keyborads import back_to_main_menu_seller
+            try:
+                edit_contact(text=temp_contact[message.chat.id]["contact"])
+                await message.reply(CONTACT_UPDATED_SUCCESS_TEXT, components=back_to_main_menu_seller())
+            except:
+                await message.reply(CONTACT_UPDATE_ERROR_TEXT, components=back_to_main_menu_seller())
         # ========== Edit product - receive new values ==========
         state = user_state[message.chat.id]
         if state and isinstance(state, str):
@@ -675,5 +689,12 @@ async def on_callback(callback: CallbackQuery):
         await send_message_to_customers(bot, text=message_text)
         await callback.message.edit(BROADCAST_SUCCESS_TEXT, components=back_to_main_menu_seller())
         temp_message.pop(callback.message.chat.id, None)
+
+    #! ========== Edit contact ==========
+    elif callback.data == CB_EDIT_CONTACT:
+        user_state[callback.message.chat.id] = "waiting_for_edit_contact"
+        from keyboards.seller.send_message.send_message_keyborads import back_to_main_menu_seller
+        from handlers.get_contact_text import get_text
+        await callback.message.edit(EDIT_CONTACT_HELP_TEXT.format(current_value=get_text()),components=back_to_main_menu_seller())
 if __name__ == "__main__":
     bot.run()

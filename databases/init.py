@@ -45,6 +45,15 @@ def init_db():
                 user_name TEXT,
                 user_id INTEGER UNIQUE NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP);""")
-    
+
+
+    # contact
+    cur.execute("""CREATE TABLE IF NOT EXISTS contact(
+                id INTEGER PRIMARY KEY CHECK (id = 1),
+                message TEXT);""")
+
+    # add text when create the database.
+    cur.execute("""INSERT OR IGNORE INTO contact(id, message) VALUES (1,"راه ارتباطی")""")
+
     conn.commit()
     conn.close()
