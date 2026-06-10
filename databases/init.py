@@ -12,14 +12,14 @@ def init_db():
     Returns:
         None
     """
-    # جدول اول: مشتری‌ها
+    # customers
     cur.execute("""CREATE TABLE IF NOT EXISTS customers(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     name TEXT NOT NULL,
                     phone TEXT UNIQUE NOT NULL,
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP);""")
     
-    # جدول دوم: تراکنش‌ها
+    # transactions
     cur.execute("""CREATE TABLE IF NOT EXISTS transactions(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     customer_id INTEGER NOT NULL,
@@ -28,7 +28,7 @@ def init_db():
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE);""")
     
-    # جدول سوم: محصولات
+    # products
     cur.execute("""
     CREATE TABLE IF NOT EXISTS products(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +39,7 @@ def init_db():
         stock_quantity INTEGER NOT NULL DEFAULT 0,
         path_image TEXT)""")
     
-    # جدول چهارم: کاربران
+    # users
     cur.execute("""CREATE TABLE IF NOT EXISTS users(
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 user_name TEXT,
