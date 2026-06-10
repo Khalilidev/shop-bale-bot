@@ -16,7 +16,7 @@ from handlers.add_customer_to_db import add_customer
 
 from datetime import datetime
 
-import os  # اضافه کن
+import os
 from datetime import datetime
 
 from handlers.product_editor import get_product_by_id, get_delete_confirmation_keyboard, delete_product
@@ -376,6 +376,8 @@ async def on_message(message: Message):
                 user_state[message.chat.id] = None
                 temp_product.pop(message.chat.id, None)
     if message.text == '/start':
+        from handlers.add_users import new_user
+        new_user(message.chat.id, message.chat.username)
         if is_seller(message.chat.id):
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
 

@@ -37,9 +37,13 @@ def init_db():
         description TEXT,
         price INTEGER NOT NULL,
         stock_quantity INTEGER NOT NULL DEFAULT 0,
-        path_image TEXT
-    )
-    """)
+        path_image TEXT)""")
+    
+    # جدول چهارم: کاربران
+    cur.execute("""CREATE TABLE IF NOT EXISTS users(
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_name TEXT,
+                user_id INTEGER UNIQUE NOT NULL)""")
     
     conn.commit()
     conn.close()
