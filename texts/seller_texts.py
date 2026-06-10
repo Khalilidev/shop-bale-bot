@@ -191,3 +191,11 @@ PRODUCT_STOCK_NEGATIVE_ERROR_TEXT = "❌ موجودی نمی‌تواند منف
 PRODUCT_UPDATE_DESCRIPTION_ERROR_TEXT = "❌ خطا در به‌روزرسانی توضیحات محصول."
 
 PRODUCT_IMAGE_UPDATED_SUCCESS_TEXT = "✅ عکس محصول با موفقیت به‌روزرسانی شد.\n\n📸 مسیر: {filepath}"
+
+SEND_MESSAGE_TEXT = " لطفاً متن پیام خود را وارد کنید: 📩"
+
+BROADCAST_CONFIRM_TEXT = "📨 **پیام ارسالی شما به صورت زیر است:**\n\n{message}\n\n───────────────────\n❓ آیا قصد ارسال آن به مشتریان خود را دارید؟"
+
+BROADCAST_SUCCESS_TEXT = "✅ پیام با موفقیت به مشتریان ارسال شد!"
+
+NO_MESSAGE_TO_SEND_TEXT = "❌ خطا: پیامی برای ارسال وجود ندارد!\n\nلطفاً ابتدا پیام خود را بنویسید."

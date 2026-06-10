@@ -11,6 +11,7 @@ from texts.seller_texts import *
 
 from callbacks.cb_main_menu_seller import *
 from callbacks.cb_seller_account_book import *
+from callbacks.cb_seller_send_message import *
 
 from handlers.add_customer_to_db import add_customer
 
@@ -28,6 +29,7 @@ temp_transaction = {}
 temp_ecxel = {}
 temp_product = {}
 temp_id = {}
+temp_message = {}
 
 bot = Bot(TOKEN)
 
@@ -271,6 +273,13 @@ async def on_message(message: Message):
                     user_state[message.chat.id] = None
             except ValueError:
                 await message.reply("❌ لطفاً یک عدد معتبر به عنوان شناسه محصول وارد کنید.\nمثال: 123", components=back_products_managment_menu())
+        #! ========== send message module ==========
+        elif user_state[message.chat.id] == "waiting_for_broadcast":
+            if message.chat.id not in temp_message:
+                temp_message[message.chat.id] = {}
+            temp_message[message.chat.id]["message"] = message.text
+            from keyboards.seller.send_message.send_message_keyborads import broadcast_confirm_keyboard
+            await message.reply(BROADCAST_CONFIRM_TEXT.format(message=message.text), components=broadcast_confirm_keyboard())
         # ========== Edit product - receive new values ==========
         state = user_state[message.chat.id]
         if state and isinstance(state, str):
@@ -646,5 +655,25 @@ async def on_callback(callback: CallbackQuery):
         user_state[callback.message.chat.id] = None
         temp_product.pop(callback.message.chat.id, None)
         await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, components=main_menu_products_managment())
+
+    #! ========== send message module ==========
+    elif callback.data == CB_SELLER_SEND_MESSAGE:
+        from keyboards.seller.send_message.send_message_keyborads import back_to_main_menu_seller
+        user_state[callback.message.chat.id] = "waiting_for_broadcast"
+        await callback.message.edit(SEND_MESSAGE_TEXT, components=back_to_main_menu_seller())
+
+    elif callback.data == CB_BROADCAST_CONFIRM:
+        from handlers.send_message import send_message_to_customers
+        from keyboards.seller.send_message.send_message_keyborads import back_to_main_menu_seller
+        if callback.message.chat.id not in temp_message:
+            await callback.message.edit(NO_MESSAGE_TO_SEND_TEXT, components=back_to_main_menu_seller())
+            return
+        if "message" not in temp_message[callback.message.chat.id]:
+            await callback.message.edit(NO_MESSAGE_TO_SEND_TEXT, components=back_to_main_menu_seller())
+            return
+        message_text = temp_message[callback.message.chat.id]["message"]
+        await send_message_to_customers(bot, text=message_text)
+        await callback.message.edit(BROADCAST_SUCCESS_TEXT, components=back_to_main_menu_seller())
+        temp_message.pop(callback.message.chat.id, None)
 if __name__ == "__main__":
     bot.run()

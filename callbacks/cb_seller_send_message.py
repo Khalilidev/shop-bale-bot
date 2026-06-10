@@ -1,0 +1,1 @@
+CB_BROADCAST_CONFIRM = "seller:send_message:confirm"
