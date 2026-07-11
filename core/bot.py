@@ -21,6 +21,7 @@ import os
 from datetime import datetime
 
 from handlers.product_editor import get_product_by_id, get_delete_confirmation_keyboard, delete_product
+from handlers.clear_state import clear_user_state
 from keyboards.seller.products_managment.prodocts_managment_keyboards import edit_product_back_keyboard
 
 user_state = {}
@@ -401,6 +402,7 @@ async def on_message(message: Message):
     if message.text == '/start':
         from handlers.add_users import new_user
         new_user(message.chat.id, message.chat.username)
+        clear_user_state(user_state, temp_customer, temp_transaction, temp_ecxel,temp_product, temp_id, temp_message, temp_contact,message.chat.id)
         if is_seller(message.chat.id):
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
 
@@ -416,6 +418,7 @@ async def on_callback(callback: CallbackQuery):
     # ========== SELLER MAIN MENU ==========
 
     if callback.data == CB_BACK_TO_MAIN_MENU_SELLER:
+        clear_user_state(user_state, temp_customer, temp_transaction, temp_ecxel,temp_product, temp_id, temp_message, temp_contact,callback.message.chat.id)
         await callback.message.edit(WELCOME_SELLER_TEXT, components=main_menu_seller())
     # ========== ACCOUNT BOOK ==========
 
@@ -668,6 +671,7 @@ async def on_callback(callback: CallbackQuery):
     elif callback.data == CB_SELLER_PRODUCT_BACK_TO_MENU:
         user_state[callback.message.chat.id] = None
         temp_product.pop(callback.message.chat.id, None)
+        clear_user_state(user_state, temp_customer, temp_transaction, temp_ecxel,temp_product, temp_id, temp_message, temp_contact,callback.message.chat.id)
         await callback.message.edit(PRODUCTS_MANAGEMENT_TEXT, components=main_menu_products_managment())
 
     #! ========== send message module ==========
