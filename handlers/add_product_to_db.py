@@ -85,7 +85,7 @@ def check_product_exists(name: str, brand: str) -> dict:
     return dict(result) if result else None
 
 
-def add_or_update_product(name: str, brand: str, price: int, stock: int, description: str = "", image_path: str = "") -> dict:
+def add_or_update_product(name: str, brand: str, price: int, stock: int, category: str = "", description: str = "", image_path: str = "") -> dict:
     """
     Add new product or update existing product.
     
@@ -102,6 +102,8 @@ def add_or_update_product(name: str, brand: str, price: int, stock: int, descrip
     
     name = name.strip()
     brand = get_default_brand(brand)
+    # اگر دسته‌بندی انتخاب نشده باشد، "بدون دسته‌بندی" ذخیره می‌شود
+    category = category.strip() if category else "بدون دسته‌بندی"
     price = validate_price(str(price))
     stock = validate_stock(str(stock))
     
@@ -121,9 +123,9 @@ def add_or_update_product(name: str, brand: str, price: int, stock: int, descrip
         
         cur.execute("""
             UPDATE products 
-            SET price = ?, stock_quantity = ?, description = ?, path_image = ?
+            SET price = ?, stock_quantity = ?, category = ?, description = ?, path_image = ?
             WHERE id = ?
-        """, (price, new_stock, description, image_path, product_id))
+        """, (price, new_stock, category, description, image_path, product_id))
         
         conn.commit()
         conn.close()
@@ -142,9 +144,9 @@ def add_or_update_product(name: str, brand: str, price: int, stock: int, descrip
     else:
         # افزودن محصول جدید
         cur.execute("""
-            INSERT INTO products (name, brand, description, price, stock_quantity, path_image)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (name, brand, description, price, stock, image_path))
+            INSERT INTO products (name, brand, category, description, price, stock_quantity, path_image)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (name, brand, category, description, price, stock, image_path))
         
         product_id = cur.lastrowid
         conn.commit()
@@ -157,6 +159,7 @@ def add_or_update_product(name: str, brand: str, price: int, stock: int, descrip
             "message": f"✅ محصول جدید اضافه شد",
             "name": name,
             "brand": brand,
+            "category": category,
             "price": price,
             "stock": stock
         }
@@ -171,6 +174,7 @@ def add_product_from_dict(product_data: dict) -> dict:
         brand=product_data.get("brand", ""),
         price=product_data.get("price", 0),
         stock=product_data.get("stock", 0),
+        category=product_data.get("category", ""),
         description=product_data.get("description", ""),
         image_path=product_data.get("image_path", "")
     )
@@ -185,6 +189,7 @@ def add_product_from_excel_row(row: dict) -> dict:
         brand=row.get("brand", ""),
         price=row.get("price", 0),
         stock=row.get("stock", 0),
+        category=row.get("category", ""),
         description=row.get("desc", ""),
         image_path=""
     )

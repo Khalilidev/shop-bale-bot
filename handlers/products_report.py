@@ -2,7 +2,7 @@
 """
 Handler for generating and sending PDF report of all products.
 """
-from keyboards.seller.account_book.main_menu_account_book import back_btn
+from keyboards.seller.account_book.main_menu_account_book import back_btn, back_btn_to_seller_menu
 import sqlite3
 import os
 import tempfile
@@ -75,6 +75,7 @@ def get_all_products() -> list:
             id,
             name,
             brand,
+            category,
             description,
             price,
             stock_quantity as stock
@@ -240,23 +241,25 @@ async def generate_products_report_pdf() -> str:
         Paragraph(fa("شناسه"), style_th),
         Paragraph(fa("نام محصول"), style_th),
         Paragraph(fa("برند"), style_th),
+        Paragraph(fa("دسته‌بندی"), style_th),
         Paragraph(fa("قیمت (تومان)"), style_th),
         Paragraph(fa("موجودی"), style_th),]
-    
+
     rows = [headers]
-    
+
     for idx, product in enumerate(products, 1):
         rows.append([
             Paragraph(fa(str(idx)), style_td),
             Paragraph(fa(str(product['id'])), style_td),
             Paragraph(fa(product['name']), style_td),
             Paragraph(fa(product['brand']), style_td),
+            Paragraph(fa(product.get('category', 'بدون دسته‌بندی')), style_td),
             Paragraph(fa(fmt_price(product['price'])), style_td_price),
             Paragraph(fa(str(product['stock'])), style_td_stock),
         ])
-    
-    col_widths = [60, 70, 250, 150, 150, 80]
-    
+
+    col_widths = [60, 70, 200, 130, 140, 130, 80]  # تغییر عرض ستون‌ها
+        
     table = Table(rows, colWidths=col_widths, repeatRows=1)
     table.setStyle(TableStyle([
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#2c3e50')),
@@ -336,10 +339,10 @@ async def send_products_report_pdf(callback):
                     InputFile(f, file_name=fname),
                     caption=f"📊 گزارش لیست محصولات\n📅 تاریخ: {datetime.now().strftime('%Y/%m/%d')}\n\n✅ این گزارش شامل تمام محصولات موجود است.")
             os.remove(filepath)
-            await callback.message.edit("✅ فایل PDF با موفقیت ارسال شد.", components=back_btn())
+            await callback.message.edit("✅ فایل PDF با موفقیت ارسال شد.", components=back_btn_to_seller_menu())
         else:
-            await callback.message.edit("❌ هیچ محصولی در سیستم وجود ندارد!", components=back_btn())
+            await callback.message.edit("❌ هیچ محصولی در سیستم وجود ندارد!", components=back_btn_to_seller_menu())
             
     except Exception as e:
         print(f"[PDF Error] {e}")
-        await callback.message.edit(f"❌ خطا در تولید PDF: {str(e)}", components=back_btn())
+        await callback.message.edit(f"❌ خطا در تولید PDF: {str(e)}", components=back_btn_to_seller_menu())

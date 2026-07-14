@@ -4,12 +4,13 @@ Handler for processing Excel/CSV files and adding products to database.
 import pandas as pd
 import os
 from handlers.add_product_to_db import add_or_update_product, convert_persian_to_english
+from handlers.categories import CATEGORIES
 
 def process_excel_file(file_path: str) -> dict:
     """
     Process Excel/CSV file and add all products to database.
     
-    Expected columns: name, brand, price, stock, desc
+    Expected columns: name, brand, category, price, stock, desc
     
     Args:
         file_path: Path to Excel or CSV file
@@ -59,6 +60,13 @@ def process_excel_file(file_path: str) -> dict:
                 # دریافت و تمیز کردن داده‌ها
                 name = str(row.get('name', '')).strip()
                 brand = str(row.get('brand', '')).strip()
+                category = str(row.get('category', '')).strip()
+                
+                # بررسی اینکه دسته‌بندی وارد شده در لیست دسته‌بندی‌ها وجود داشته باشد
+                if category and category not in CATEGORIES:
+                    # اگر دسته‌بندی معتبر نبود، "بدون دسته‌بندی" استفاده می‌شود
+                    category = "بدون دسته‌بندی"
+                
                 price_str = str(row.get('price', '0'))
                 stock_str = str(row.get('stock', '0'))
                 description = str(row.get('desc', '')) if pd.notna(row.get('desc')) else ""
@@ -80,6 +88,7 @@ def process_excel_file(file_path: str) -> dict:
                     brand=brand,
                     price=price,
                     stock=stock,
+                    category=category,
                     description=description,
                     image_path=""
                 )

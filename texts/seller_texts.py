@@ -215,3 +215,25 @@ EDIT_CONTACT_HELP_TEXT = (
 CONTACT_UPDATED_SUCCESS_TEXT = "✅ **راه‌های ارتباطی با موفقیت به‌روزرسانی شد**\n\nاطلاعات جدید برای مشتریان نمایش داده خواهد شد.\n\n🔙 برای بازگشت کلیک کنید."
 
 CONTACT_UPDATE_ERROR_TEXT = "❌ خطا در به‌روزرسانی راه‌های ارتباطی!\n\nلطفاً مجدداً تلاش کنید.\n\n🔙 برای بازگشت کلیک کنید."
+
+# ========== Category texts ==========
+ASK_PRODUCT_CATEGORY_TEXT = "📂 **دسته‌بندی محصول را انتخاب کنید:**\n\nلطفاً یکی از دسته‌بندی‌های زیر را انتخاب کنید:"
+CATEGORY_SELECTED_TEXT = "✅ دسته‌بندی **«{category}»** انتخاب شد."
+CATEGORY_NOT_FOUND_TEXT = "❌ دسته‌بندی انتخاب شده معتبر نیست."
+
+# ========== Edit category text ==========
+ASK_NEW_CATEGORY_TEXT = "📂 **ویرایش دسته‌بندی محصول**\n\nدسته‌بندی فعلی: **{current}**\n\nلطفاً دسته‌بندی جدید را انتخاب کنید:"
+CATEGORY_UPDATED_SUCCESS_TEXT = "✅ دسته‌بندی محصول با موفقیت به **«{new_value}»** تغییر یافت."
+CATEGORY_UPDATE_ERROR_TEXT = "❌ خطا در به‌روزرسانی دسته‌بندی محصول. لطفاً مجدداً تلاش کنید."
+
+# ========== Update product confirm texts ==========
+PRODUCT_CONFIRM_TEXT = """📦 **تأیید اطلاعات محصول**
+
+📌 **نام:** {name}
+🏷️ **برند:** {brand}
+📂 **دسته‌بندی:** {category}
+💰 **قیمت:** {price} تومان
+📦 **موجودی:** {stock} عدد
+📝 **توضیحات:** {desc}
+
+آیا اطلاعات فوق صحیح است؟"""

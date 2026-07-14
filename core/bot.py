@@ -23,6 +23,7 @@ from datetime import datetime
 
 from handlers.product_editor import get_product_by_id, get_delete_confirmation_keyboard, delete_product
 from handlers.clear_state import clear_user_state
+from handlers.categories import get_category_keyboard, CATEGORIES
 from keyboards.seller.products_managment.prodocts_managment_keyboards import edit_product_back_keyboard
 
 user_state = {}
@@ -197,11 +198,12 @@ async def on_message(message: Message):
             else:
                 await message.reply(EXCEL_NO_FILE_TEXT, components=back_products_managment_menu())
                 user_state[message.chat.id] = None        
+
         # ========== Add product ==========
         elif user_state[message.chat.id] == "waiting_for_product_name":
             temp_product[message.chat.id]["product_name"] = message.text
-            user_state[message.chat.id] = "waiting_for_product_brand"
-            await message.reply(ASK_PRODUCT_BRAND_TEXT, components=back_products_managment_menu())
+            user_state[message.chat.id] = "waiting_for_product_category"
+            await message.reply(ASK_PRODUCT_CATEGORY_TEXT, components=get_category_keyboard(CB_SELLER_PRODUCT_CATEGORY_SELECTED))
 
         elif user_state[message.chat.id] == "waiting_for_product_brand":
             temp_product[message.chat.id]["product_brand"] = message.text
@@ -242,10 +244,12 @@ async def on_message(message: Message):
                     temp_product[message.chat.id]["product_image"] = photo.file_id
                     print(f"image saved in : {filepath}")
                     user_state[message.chat.id] = "waiting_for_product_confirm"
+                    category = temp_product[message.chat.id].get("product_category", "بدون دسته‌بندی")
                     await message.reply(
                         PRODUCT_CONFIRM_TEXT.format(
                             name=temp_product[message.chat.id]["product_name"],
                             brand=temp_product[message.chat.id]["product_brand"],
+                            category=category,
                             price=temp_product[message.chat.id]["product_price"],
                             stock=temp_product[message.chat.id]["product_stock"],
                             desc=temp_product[message.chat.id]["product_description"]),components=apply_products())
@@ -400,6 +404,10 @@ async def on_message(message: Message):
                 temp_product.pop(message.chat.id, None)                
                 user_state[message.chat.id] = None
                 temp_product.pop(message.chat.id, None)
+            # ========== Edit product - category ==========
+            elif state.startswith("edit_product_category:"):
+                product_id = int(state.split(":")[-1])
+                pass
     else:
         ################################################################ !
         # !               handling the customer                          #
@@ -533,10 +541,10 @@ async def on_callback(callback: CallbackQuery):
                 "❌ خطا: قیمت و موجودی باید عدد باشند.\n\nلطفاً مجدداً تلاش کنید.",
                 components=back_products_managment_menu())
             return
-        
         product_dict = {
             "name": product_data.get("product_name", ""),
             "brand": product_data.get("product_brand", ""),
+            "category": product_data.get("product_category", "بدون دسته‌بندی"),
             "price": price,
             "stock": stock,
             "description": product_data.get("product_description", ""),
@@ -702,6 +710,63 @@ async def on_callback(callback: CallbackQuery):
         await send_message_to_customers(bot, text=message_text)
         await callback.message.edit(BROADCAST_SUCCESS_TEXT, components=back_to_main_menu_seller())
         temp_message.pop(callback.message.chat.id, None)
+
+
+    # ========== Edit category ==========
+    elif callback.data.startswith(CB_SELLER_PRODUCT_EDIT_CATEGORY + ":"):
+        product_id = int(callback.data.split(":")[-1])
+        product = get_product_by_id(product_id)
+        
+        if product:
+            user_state[callback.message.chat.id] = f"edit_product_category:{product_id}"
+            temp_product[callback.message.chat.id] = {"product_id": product_id}
+            await callback.message.edit(
+                ASK_NEW_CATEGORY_TEXT.format(current=product.get('category', 'بدون دسته‌بندی')),
+                components=get_category_keyboard(CB_SELLER_PRODUCT_CATEGORY_SELECTED))
+        else:
+            await callback.message.edit(PRODUCT_NOT_FOUND_TEXT.format(product_id=product_id), components=back_products_managment_menu())
+    # ========== Category selection callback ==========
+    elif callback.data.startswith(CB_SELLER_PRODUCT_CATEGORY_SELECTED + ":"):
+        category = callback.data.split(":", 1)[-1]
+        
+        if category not in CATEGORIES:
+            await callback.message.edit(
+                CATEGORY_NOT_FOUND_TEXT,
+                components=back_products_managment_menu())
+            return
+        
+        current_state = user_state.get(callback.message.chat.id, "")
+        
+        # حالت ویرایش دسته‌بندی
+        if current_state and current_state.startswith("edit_product_category:"):
+            product_id = int(current_state.split(":")[-1])
+            from handlers.product_editor import update_product_field
+            
+            if update_product_field(product_id, "category", category):
+                await callback.message.edit(
+                    CATEGORY_UPDATED_SUCCESS_TEXT.format(new_value=category),
+                    components=back_products_managment_menu())
+            else:
+                await callback.message.edit(
+                    CATEGORY_UPDATE_ERROR_TEXT,
+                    components=back_products_managment_menu())
+            
+            user_state[callback.message.chat.id] = None
+            temp_product.pop(callback.message.chat.id, None)
+        
+        # حالت افزودن محصول جدید
+        elif current_state == "waiting_for_product_category":
+            temp_product[callback.message.chat.id]["product_category"] = category
+            user_state[callback.message.chat.id] = "waiting_for_product_brand"
+            await callback.message.edit(
+                CATEGORY_SELECTED_TEXT.format(category=category) + "\n\n" + ASK_PRODUCT_BRAND_TEXT,
+                components=back_products_managment_menu())
+        
+        else:
+            # اگر حالت نامشخص بود، خطا بده
+            await callback.message.edit(
+                "❌ خطا: وضعیت نامعتبر. لطفاً دوباره تلاش کنید.",
+                components=back_products_managment_menu())
 
     #! ========== Edit contact ==========
     elif callback.data == CB_EDIT_CONTACT:

@@ -56,3 +56,12 @@ def confirm_debt_buttons():
     keyboard.add(btn1, row=1)
     keyboard.add(btn2, row=2)
     return keyboard
+
+def back_btn_to_seller_menu():
+    keyboard = InlineKeyboardMarkup()
+
+    btn1 = InlineKeyboardButton("🔙 بازگشت", callback_data=CB_BACK_TO_MAIN_MENU_SELLER)
+
+    keyboard.add(btn1, row=1)
+
+    return keyboard
