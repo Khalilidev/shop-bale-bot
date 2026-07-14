@@ -8,6 +8,7 @@ from keyboards.seller.main_menu_seller import *
 from keyboards.seller.products_managment.prodocts_managment_keyboards import *
 
 from texts.seller_texts import *
+from texts.customer_texts import *
 
 from callbacks.cb_main_menu_seller import *
 from callbacks.cb_seller_account_book import *
@@ -399,12 +400,20 @@ async def on_message(message: Message):
                 temp_product.pop(message.chat.id, None)                
                 user_state[message.chat.id] = None
                 temp_product.pop(message.chat.id, None)
+    else:
+        ################################################################ !
+        # !               handling the customer                          #
+        #################################################################!
+        pass
     if message.text == '/start':
         from handlers.add_users import new_user
         new_user(message.chat.id, message.chat.username)
         clear_user_state(user_state, temp_customer, temp_transaction, temp_ecxel,temp_product, temp_id, temp_message, temp_contact,message.chat.id)
         if is_seller(message.chat.id):
             await message.reply(WELCOME_SELLER_TEXT, components=main_menu_seller())
+        else :
+            from keyboards.customer.main_menu_customer import main_menu_customer
+            await message.reply(CUSTOMER_WELLCOME_MESSAGE, components=main_menu_customer())
 
 @bot.event
 async def on_callback(callback: CallbackQuery):
@@ -700,5 +709,12 @@ async def on_callback(callback: CallbackQuery):
         from keyboards.seller.send_message.send_message_keyborads import back_to_main_menu_seller
         from handlers.get_contact_text import get_text
         await callback.message.edit(EDIT_CONTACT_HELP_TEXT.format(current_value=get_text()),components=back_to_main_menu_seller())
+
+
+
+
+    ################################################################ !
+    # !               handling the customer                          #
+    #################################################################!
 if __name__ == "__main__":
     bot.run()
