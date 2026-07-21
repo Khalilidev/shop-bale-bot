@@ -9,5 +9,5 @@ def is_seller(Id):
     Returns:
         bool: True, if user is seller . else False.
     """
-    if Id == configs.Id : return True
+    if Id == configs.SELLER_ID : return True
     return False

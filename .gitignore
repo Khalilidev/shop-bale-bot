@@ -46,6 +46,6 @@ htmlcov/
 # PyInstaller
 *.spec
 
-configs.py
+.env
 products_images/
 database.db

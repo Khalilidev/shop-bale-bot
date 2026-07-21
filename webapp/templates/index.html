@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>فروشگاه آقای شیری</title>
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    
+    <!-- ========== HEADER ========== -->
+    <header>
+        <div class="header-content">
+            <div class="header-title">
+                <i class="fas fa-store-alt"></i>
+                <span>فروشگاه آقای شیری</span>
+            </div>
+            <div class="cart-icon" id="cartIcon" onclick="toggleCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span class="cart-badge" id="cartBadge">0</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main>
+        <!-- Categories -->
+        <div class="categories-section" id="categoriesSection">
+            <div class="section-title">
+                <i class="fas fa-tags"></i>
+                <h2>دسته‌بندی محصولات</h2>
+            </div>
+            <div class="categories-container" id="categoriesContainer">
+                <!-- Categories loaded by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Products -->
+        <div class="products-section" id="productsSection">
+            <div class="section-title">
+                <i class="fas fa-boxes"></i>
+                <h2 id="productsTitle">همه محصولات</h2>
+            </div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products loaded by JavaScript -->
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== CART SIDEBAR ========== -->
+    <div class="cart-overlay" id="cartOverlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fas fa-shopping-cart"></i> سبد خرید</h3>
+            <button class="close-cart" onclick="toggleCart()">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <i class="fas fa-shopping-bag"></i>
+                <p>سبد خرید خالی است</p>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>جمع کل:</span>
+                <span id="cartTotal">۰ تومان</span>
+            </div>
+            <div class="cart-total">
+                <span>جمع کل:</span>
+                <span id="cartTotal">۰ تومان</span>
+            </div>
+            
+            <!-- فرم اطلاعات مشتری -->
+            <div class="customer-info-form" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
+                <input type="text" id="customerName" placeholder="نام و نام خانوادگی" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" required>
+                <input type="tel" id="customerPhone" placeholder="شماره تماس (مثال: 0912...)" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" required>
+            </div>
+            
+            <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
+                <i class="fas fa-check-circle"></i> ثبت سفارش
+            </button>
+            <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
+                <i class="fas fa-check-circle"></i> ثبت سفارش
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== TOAST NOTIFICATION ========== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ========== LOADING OVERLAY ========== -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <p>در حال ثبت سفارش...</p>
+    </div>
+
+    <!-- ========== SCRIPTS ========== -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

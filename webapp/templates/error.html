@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دسترسی غیرمجاز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+        .error-box {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 32px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .error-box i {
+            font-size: 64px;
+            color: #ea4335;
+            margin-bottom: 16px;
+        }
+        .error-box h1 {
+            font-size: 22px;
+            color: #202124;
+            margin-bottom: 8px;
+        }
+        .error-box p {
+            color: #5f6368;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+        .error-box .btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 32px;
+            background: #1a73e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-family: 'Vazirmatn', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .error-box .btn:hover {
+            background: #1557b0;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-box">
+        <i class="fas fa-lock"></i>
+        <h1>🚫 دسترسی غیرمجاز</h1>
+        <p>{{ message }}</p>
+        <a href="#" class="btn" onclick="window.location.href='https://ble.ir/shop_testbot'">
+            <i class="fas fa-robot"></i> بازگشت به ربات
+        </a>
+    </div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</body>
+</html>

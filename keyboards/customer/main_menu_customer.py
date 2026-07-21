@@ -6,7 +6,7 @@ class WebAppInfo:
         
 def main_menu_customer():
     keyboard = InlineKeyboardMarkup()
-    web_app_url = WebAppInfo(url='https://docs.bale.ai/miniapp')
+    web_app_url = WebAppInfo(url='')
     btn1 = InlineKeyboardButton('نمایش محصولات', url=web_app_url.url)
     btn2 = InlineKeyboardButton('دریافت PDF محصولات')
     btn3 = InlineKeyboardButton('سبد خرید')
