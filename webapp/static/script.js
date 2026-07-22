@@ -22,7 +22,11 @@ const DOM = {
     cartTotal: document.getElementById('cartTotal'),
     checkoutBtn: document.getElementById('checkoutBtn'),
     toastContainer: document.getElementById('toastContainer'),
-    loadingOverlay: document.getElementById('loadingOverlay')
+    loadingOverlay: document.getElementById('loadingOverlay'),
+    customerName: document.getElementById('customerName'),
+    customerPhone: document.getElementById('customerPhone'),
+    customerAddress: document.getElementById('customerAddress'),
+    customerNote: document.getElementById('customerNote')
 };
 
 // ========================================
@@ -339,23 +343,29 @@ function closeModal() {
         document.body.style.overflow = '';
     }
 }
+
+// ========================================
+// Checkout - ثبت سفارش (بدون user_id)
+// ========================================
 async function checkout() {
     if (state.cart.length === 0) {
         showToast('سبد خرید خالی است!', 'warning');
         return;
     }
     
-    // ۱. دریافت نام و شماره تلفن از فیلدهای فرم جدید
-    const nameInput = document.getElementById('customerName').value.trim();
-    const phoneInput = document.getElementById('customerPhone').value.trim();
+    // دریافت اطلاعات از فرم
+    const nameInput = DOM.customerName?.value?.trim() || '';
+    const phoneInput = DOM.customerPhone?.value?.trim() || '';
+    const addressInput = DOM.customerAddress?.value?.trim() || '';
+    const noteInput = DOM.customerNote?.value?.trim() || '';
     
-    // ۲. اعتبارسنجی پر بودن اطلاعات فرم
+    // اعتبارسنجی
     if (!nameInput || !phoneInput) {
         showToast('لطفاً نام و شماره تماس خود را وارد کنید.', 'error');
         return;
     }
     
-    // ۳. بررسی مجدد موجودی انبار پیش از ارسال درخواست[cite: 4]
+    // بررسی مجدد موجودی
     for (const item of state.cart) {
         const product = state.products.find(p => p.id === item.id);
         if (!product || product.stock < item.quantity) {
@@ -370,10 +380,6 @@ async function checkout() {
         quantity: item.quantity
     }));
     
-    // ۴. دریافت آیدی کاربر از پارامتر startapp در آدرس URL[cite: 4]
-    const urlParams = new URLSearchParams(window.location.search);
-    const userId = urlParams.get('startapp') || 'unknown';
-    
     showLoading();
     
     try {
@@ -381,9 +387,10 @@ async function checkout() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                user_id: parseInt(userId) || 0,
                 customer_name: nameInput,
                 customer_phone: phoneInput,
+                customer_address: addressInput || null,
+                customer_note: noteInput || null,
                 items: items,
                 total_price: total
             })
@@ -394,12 +401,13 @@ async function checkout() {
         if (result.success) {
             showToast(result.message, 'success');
             
-            // خالی کردن سبد خرید و فرم[cite: 4]
+            // خالی کردن سبد خرید و فرم
             state.cart = [];
-            document.getElementById('customerName').value = '';
-            document.getElementById('customerPhone').value = '';
+            if (DOM.customerName) DOM.customerName.value = '';
+            if (DOM.customerPhone) DOM.customerPhone.value = '';
+            if (DOM.customerAddress) DOM.customerAddress.value = '';
+            if (DOM.customerNote) DOM.customerNote.value = '';
             
-            // بروزرسانی رابط کاربری[cite: 4]
             updateCartUI();
             updateProductButtons();
             toggleCart();
@@ -413,6 +421,7 @@ async function checkout() {
         hideLoading();
     }
 }
+
 // ========================================
 // Load Products
 // ========================================

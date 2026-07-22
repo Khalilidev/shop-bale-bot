@@ -73,20 +73,15 @@
                 <span>جمع کل:</span>
                 <span id="cartTotal">۰ تومان</span>
             </div>
-            <div class="cart-total">
-                <span>جمع کل:</span>
-                <span id="cartTotal">۰ تومان</span>
-            </div>
             
             <!-- فرم اطلاعات مشتری -->
             <div class="customer-info-form" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-                <input type="text" id="customerName" placeholder="نام و نام خانوادگی" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" required>
-                <input type="tel" id="customerPhone" placeholder="شماره تماس (مثال: 0912...)" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit;" required>
+                <input type="text" id="customerName" placeholder="نام و نام خانوادگی *" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px;" required>
+                <input type="tel" id="customerPhone" placeholder="شماره تماس (مثال: 0912...) *" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px;" required>
+                <input type="text" id="customerAddress" placeholder="آدرس (اختیاری)" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px;">
+                <textarea id="customerNote" placeholder="یادداشت (اختیاری)" rows="2" style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; font-size: 14px; resize: vertical;"></textarea>
             </div>
             
-            <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
-                <i class="fas fa-check-circle"></i> ثبت سفارش
-            </button>
             <button class="checkout-btn" id="checkoutBtn" onclick="checkout()">
                 <i class="fas fa-check-circle"></i> ثبت سفارش
             </button>

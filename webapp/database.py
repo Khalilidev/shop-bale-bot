@@ -123,7 +123,8 @@ def get_categories() -> List[str]:
 
 def update_product_stock(product_id: int, quantity: int) -> bool:
     """
-    Update product stock quantity.
+    به روزرسانی موجودی محصول - این تابع دیگر استفاده نمی‌شود
+    اما برای سازگاری نگه داشته شده است
     
     Args:
         product_id: Product ID
@@ -132,27 +133,8 @@ def update_product_stock(product_id: int, quantity: int) -> bool:
     Returns:
         bool: True if successful, False otherwise
     """
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        cur.execute("""
-            UPDATE products 
-            SET stock_quantity = stock_quantity - ? 
-            WHERE id = ? AND stock_quantity >= ?
-        """, (quantity, product_id, quantity))
-        
-        if cur.rowcount > 0:
-            conn.commit()
-            conn.close()
-            return True
-        else:
-            conn.close()
-            return False
-    except Exception as e:
-        print(f"Error updating stock: {e}")
-        conn.close()
-        return False
+    # این تابع دیگر استفاده نمی‌شود
+    return True
 
 def get_product(product_id: int) -> Optional[Dict]:
     """
@@ -193,28 +175,46 @@ def get_product(product_id: int) -> Optional[Dict]:
         return product
     
     return None
-def save_order(user_id: int, customer_name: str, customer_phone: str, items: List[Dict], total_price: int) -> Optional[int]:
-    """ذخیره سفارش جدید در دیتابیس"""
+
+def save_order(customer_name: str, customer_phone: str, customer_address: Optional[str] = None, customer_note: Optional[str] = None, items: List[Dict] = None, total_price: int = 0) -> Optional[int]:
+    """
+    save oeder in database
+    Args:
+        customer_name: customer name
+        customer_phone: customer phone
+        customer_address: customer address
+        customer_note: customer notes
+        items: list 
+        total_price: total price
+    Returns:
+        Optional[int]: None
+    """
+    if items is None:
+        items = []
+        
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # ثبت رکورد اصلی سفارش
         cur.execute("""
-            INSERT INTO orders (user_id, customer_name, customer_phone, total_price, status)
-            VALUES (?, ?, ?, ?, 'pending')
-        """, (user_id, customer_name, customer_phone, total_price))
+            INSERT INTO orders (
+                customer_name, 
+                customer_phone, 
+                customer_address,
+                customer_note,
+                total_price, 
+                status
+            )
+            VALUES (?, ?, ?, ?, ?, 'pending')
+        """, (customer_name, customer_phone, customer_address, customer_note, total_price))
         
         order_id = cur.lastrowid
         
-        # ثبت اقلام سفارش
         for item in items:
-            product = get_product(item['product_id'])
-            if product:
-                cur.execute("""
-                    INSERT INTO order_items (order_id, product_id, quantity, price)
-                    VALUES (?, ?, ?, ?)
-                """, (order_id, item['product_id'], item['quantity'], product['price']))
+            cur.execute("""
+                INSERT INTO order_items (order_id, product_id, quantity, price)
+                VALUES (?, ?, ?, ?)
+            """, (order_id, item['product_id'], item['quantity'], item.get('price', 0)))
         
         conn.commit()
         return order_id

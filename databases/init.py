@@ -3,15 +3,7 @@ import sqlite3
 def init_db():
     conn = sqlite3.connect("database.db")
     cur = conn.cursor()
-    """
-    create or load the database when bot when starting the program.
 
-    Args:
-        None
-
-    Returns:
-        None
-    """
     # customers
     cur.execute("""CREATE TABLE IF NOT EXISTS customers(
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -28,7 +20,7 @@ def init_db():
                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (customer_id) REFERENCES customers(id) ON DELETE CASCADE);""")
     
-    # products + catrgory
+    # products
     cur.execute("""
     CREATE TABLE IF NOT EXISTS products(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,21 +39,20 @@ def init_db():
                 user_id INTEGER UNIQUE NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP);""")
 
-
     # contact
     cur.execute("""CREATE TABLE IF NOT EXISTS contact(
                 id INTEGER PRIMARY KEY CHECK (id = 1),
                 message TEXT);""")
 
-    # add text when create the database.
     cur.execute("""INSERT OR IGNORE INTO contact(id, message) VALUES (1,"راه ارتباطی")""")
 
     # Orders
     cur.execute("""CREATE TABLE IF NOT EXISTS orders(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
         customer_name TEXT NOT NULL,
         customer_phone TEXT NOT NULL,
+        customer_address TEXT,
+        customer_note TEXT,
         total_price INTEGER NOT NULL,
         status TEXT DEFAULT 'pending',
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -79,3 +70,5 @@ def init_db():
 
     conn.commit()
     conn.close()
+if __name__ == "__main__":
+    init_db()

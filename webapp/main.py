@@ -18,7 +18,8 @@ from webapp.database import (
     get_products_by_category,
     get_categories,
     get_product,
-    update_product_stock
+    update_product_stock,
+    save_order
 )
 
 # ========== Configuration ==========
@@ -51,9 +52,10 @@ class OrderItem(BaseModel):
     quantity: int
 
 class OrderRequest(BaseModel):
-    user_id: int
     customer_name: str
     customer_phone: str
+    customer_address: Optional[str] = None
+    customer_note: Optional[str] = None
     items: List[OrderItem]
     total_price: int
 
@@ -69,38 +71,11 @@ class ProductResponse(BaseModel):
 
 # ========== API Endpoints ==========
 
-# @app.get("/", response_class=HTMLResponse)
-# async def index(request: Request, startapp: Optional[str] = None):
-#     """
-#     Main page. Only accessible from Bale mini-app.
-#     """
-#     # Check if accessed from Bale (via startapp parameter)
-#     # if not startapp:
-#     #     return templates.TemplateResponse(
-#     #         "error.html",
-#     #         {"request": request, "message": "❌ این صفحه فقط از طریق ربات بله قابل دسترسی است."}
-#     #     )
-    
-#     # Get categories for navigation
-#     categories = get_categories()
-    
-#     return templates.TemplateResponse(
-#         "index.html",
-#         {
-#             "request": request,
-#             "categories": categories,
-#             "bot_username": BOT_USERNAME
-#         }
-#     )
 @app.get("/", response_class=HTMLResponse)
-async def index(request: Request, startapp: Optional[str] = None):
-    """صفحه اصلی - فقط دسترسی از طریق ربات مجاز است"""
-    if not startapp:
-         return templates.TemplateResponse(
-             "error.html",
-             {"request": request, "message": "❌ این صفحه فقط از طریق دکمه درون ربات قابل دسترسی است."}
-         )
-    
+async def index(request: Request):
+    """
+    Publlic page
+    """
     categories = get_categories()
     return templates.TemplateResponse(
         "index.html",
@@ -110,6 +85,7 @@ async def index(request: Request, startapp: Optional[str] = None):
             "bot_username": BOT_USERNAME
         }
     )
+
 @app.get("/api/categories")
 async def api_categories():
     """
@@ -143,10 +119,9 @@ async def api_product(product_id: int):
 @app.post("/api/order")
 async def create_order(order: OrderRequest):
     """
-    Create a new order.
+    Save orders in database
     """
     try:
-        # 1. Inventory Verification and Validation
         for item in order.items:
             product = get_product(item.product_id)
             if not product:
@@ -160,36 +135,30 @@ async def create_order(order: OrderRequest):
                     content={"success": False, "message": f"موجودی {product['name']} کافی نیست."}
                 )
         
-        # 2. Preparing the list of items for the database and the message.
-        product_details = []
         db_items = []
         for item in order.items:
             product = get_product(item.product_id)
-            product_details.append({
-                "name": product['name'],
-                "brand": product['brand'],
-                "price": product['price'],
-                "quantity": item.quantity,
-                "total": product['price'] * item.quantity
-            })
             db_items.append({
                 "product_id": item.product_id,
-                "quantity": item.quantity
+                "quantity": item.quantity,
+                "price": product['price']
             })
         
-        # ۳. save in database (Without deducting from the balance)
-        from webapp.database import save_order
-        order_id = save_order(order.user_id, order.customer_name, order.customer_phone, db_items, order.total_price)
+        order_id = save_order(
+            customer_name=order.customer_name,
+            customer_phone=order.customer_phone,
+            customer_address=order.customer_address,
+            customer_note=order.customer_note,
+            items=db_items,
+            total_price=order.total_price
+        )
         
         if not order_id:
-             raise Exception("خطا در ذخیره دیتابیس")
+            raise Exception("خطا در ذخیره دیتابیس")
 
-        # ۴. ارسال پیام به فروشنده در بله
-        message += f"\n\n🧾 **شماره سفارش (سیستم):** `{order_id}`"
-        
         return {
             "success": True,
-            "message": "✅ سفارش شما با موفقیت ثبت شد و منتظر تایید فروشنده است.",
+            "message": "✅ سفارش شما با موفقیت ثبت شد.",
             "order_id": str(order_id)
         }
         
@@ -197,7 +166,8 @@ async def create_order(order: OrderRequest):
         print(f"Error creating order: {e}")
         return JSONResponse(
             status_code=500,
-            content={"success": False, "message": "❌ خطا در ثبت سفارش. لطفاً مجدداً تلاش کنید."})
+            content={"success": False, "message": f"❌ خطا در ثبت سفارش: {str(e)}" if str(e) else "❌ خطا در ثبت سفارش. لطفاً مجدداً تلاش کنید."}
+        )
     
 # ========== Static file serving for images ==========
 @app.get("/images/{filename}")
