@@ -6,6 +6,7 @@ from core.logging import is_seller
 from keyboards.seller.account_book.main_menu_account_book import *
 from keyboards.seller.main_menu_seller import *
 from keyboards.seller.products_managment.prodocts_managment_keyboards import *
+from keyboards.seller.reports.orders_report import *
 
 from texts.seller_texts import *
 from texts.customer_texts import *
@@ -13,6 +14,7 @@ from texts.customer_texts import *
 from callbacks.cb_main_menu_seller import *
 from callbacks.cb_seller_account_book import *
 from callbacks.cb_seller_send_message import *
+from callbacks.cb_seller_reports import *
 
 from handlers.add_customer_to_db import add_customer
 
@@ -774,12 +776,19 @@ async def on_callback(callback: CallbackQuery):
         from keyboards.seller.send_message.send_message_keyborads import back_to_main_menu_seller
         from handlers.get_contact_text import get_text
         await callback.message.edit(EDIT_CONTACT_HELP_TEXT.format(current_value=get_text()),components=back_to_main_menu_seller())
-
-
-
-
+    
+    #! ========== Reports ==========
+    elif callback.data == CB_SELLER_REPORTS:
+        await callback.message.edit(REPORT_TEXT, components=main_menu_orders_report())
+    
+    elif callback.data.startswith("seller:reports:"):
+        from handlers.order_manager import order_manager
+        await order_manager(callback)
     ################################################################ !
     # !               handling the customer                          #
     #################################################################!
 if __name__ == "__main__":
     bot.run()
+
+
+    # در حال تکمیل کردن بخش گزارشات
