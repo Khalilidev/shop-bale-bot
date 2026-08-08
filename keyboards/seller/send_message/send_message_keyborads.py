@@ -1,7 +1,6 @@
 from bale import InlineKeyboardButton, InlineKeyboardMarkup
 from callbacks.cb_seller_send_message import CB_BROADCAST_CONFIRM
 from callbacks.cb_main_menu_seller import CB_BACK_TO_MAIN_MENU_SELLER
-from cv2 import add
 def broadcast_confirm_keyboard():
     """
     confirm or cancle send messsage keyborad.

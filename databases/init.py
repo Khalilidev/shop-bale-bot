@@ -46,7 +46,7 @@ def init_db():
 
     cur.execute("""INSERT OR IGNORE INTO contact(id, message) VALUES (1,"راه ارتباطی")""")
 
-    # Orders
+    # Orders - اضافه کردن فیلدهای جدید
     cur.execute("""CREATE TABLE IF NOT EXISTS orders(
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         customer_name TEXT NOT NULL,
@@ -55,7 +55,9 @@ def init_db():
         customer_note TEXT,
         total_price INTEGER NOT NULL,
         status TEXT DEFAULT 'pending',
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        confirmed_at DATETIME,
+        cancelled_at DATETIME
     )""")
     
     # Order Items
@@ -66,6 +68,26 @@ def init_db():
         quantity INTEGER NOT NULL,
         price INTEGER NOT NULL,
         FOREIGN KEY (order_id) REFERENCES orders(id)
+    )""")
+
+    cur.execute("""CREATE TABLE IF NOT EXISTS confirmed_orders(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        original_order_id INTEGER NOT NULL,
+        customer_name TEXT NOT NULL,
+        customer_phone TEXT NOT NULL,
+        customer_address TEXT,
+        customer_note TEXT,
+        total_price INTEGER NOT NULL,
+        confirmed_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )""")
+    
+    cur.execute("""CREATE TABLE IF NOT EXISTS confirmed_order_items(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        confirmed_order_id INTEGER NOT NULL,
+        product_id INTEGER NOT NULL,
+        quantity INTEGER NOT NULL,
+        price INTEGER NOT NULL,
+        FOREIGN KEY (confirmed_order_id) REFERENCES confirmed_orders(id)
     )""")
 
     conn.commit()

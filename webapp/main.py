@@ -71,21 +71,35 @@ class ProductResponse(BaseModel):
 
 # ========== API Endpoints ==========
 
+# @app.get("/", response_class=HTMLResponse)
+# async def index(request: Request):
+#     """
+#     Publlic page
+#     """
+#     categories = get_categories()
+#     return templates.TemplateResponse(
+#         "index.html",
+#         {
+#             "request": request,
+#             "categories": categories,
+#             "bot_username": BOT_USERNAME
+#         }
+#     )
 @app.get("/", response_class=HTMLResponse)
 async def index(request: Request):
     """
-    Publlic page
+    Public page
     """
     categories = get_categories()
     return templates.TemplateResponse(
-        "index.html",
-        {
+        request=request,
+        name="index.html",
+        context={
             "request": request,
             "categories": categories,
             "bot_username": BOT_USERNAME
         }
     )
-
 @app.get("/api/categories")
 async def api_categories():
     """

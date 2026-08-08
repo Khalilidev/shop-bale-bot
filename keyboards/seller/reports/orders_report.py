@@ -20,11 +20,11 @@ def main_menu_orders_report():
 def new_orders():
     keyboard = InlineKeyboardMarkup()
 
-    btn1 = InlineKeyboardButton("دیدن جزئیات سفارش ", callback_data=CB_SELLER_REPORTS_SHOW_DETAILS)
-    btn2 = InlineKeyboardButton("ثبت سفارش", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_CONFIRTM_ORDER)
-    btn3 = InlineKeyboardButton("لغو کردن سفارش", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_CANCEL_ORDER)
-    btn4 = InlineKeyboardButton("قبلی", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_PREV)
-    btn5 = InlineKeyboardButton("بعدی", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_NEXT)
+    btn1 = InlineKeyboardButton("📄 دیدن جزئیات سفارش", callback_data=CB_SELLER_REPORTS_SHOW_DETAILS)
+    btn2 = InlineKeyboardButton("✅ ثبت سفارش", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_CONFIRM_ORDER)
+    btn3 = InlineKeyboardButton("❌ لغو کردن سفارش", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_CANCEL_ORDER)
+    btn4 = InlineKeyboardButton("◀️ قبلی", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_PREV)
+    btn5 = InlineKeyboardButton("▶️ بعدی", callback_data=CB_SELLER_REPORTS_NEW_ORDERS_NEXT)
 
     keyboard.add(btn1, row=1)
     keyboard.add(btn2, row=2)
